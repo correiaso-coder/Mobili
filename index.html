@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobili — Painel de Indicadores</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5.2.10/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans@5.2.8/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@5.2.7/index.css">
+<style>
+:root{
+  --ink:#12161F; --ink-soft:#3A4150; --muted:#6B7280; --faint:#9AA1AC;
+  --paper:#F4F5F7; --surface:#FFFFFF; --line:#E3E5EA;
+  --signal:#FF6A2B; --signal-soft:#FFEADD; --signal-deep:#B8430C;
+  --route:#13988A; --route-soft:#DCF3EF; --route-deep:#0B6B61;
+  --risk:#D5453C; --risk-soft:#FBE3E1; --risk-deep:#962F28;
+  --gold:#C8932E; --gold-soft:#F7ECD6;
+  --meta:#2D6CDF; --meta-soft:#E3EBFC; --meta-deep:#1D4FAE;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:'IBM Plex Sans', system-ui, sans-serif;
+  font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:0 28px 80px;}
+a{color:var(--route-deep);}
+
+/* ---------- HEADER ---------- */
+.topbar{
+  background:var(--ink); color:#fff;
+  border-bottom:1px solid var(--ink);
+}
+.topbar-inner{
+  max-width:1180px; margin:0 auto; padding:26px 28px 22px;
+  display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;
+}
+.brand{display:flex; align-items:center; gap:12px;}
+.brand-mark{
+  width:34px; height:34px; border-radius:50%;
+  border:2px solid var(--signal); position:relative; flex:none;
+}
+.brand-mark::after{
+  content:""; position:absolute; top:50%; left:50%; width:8px; height:8px;
+  background:var(--signal); border-radius:50%; transform:translate(-50%,-50%);
+}
+.brand-name{
+  font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:22px;
+  letter-spacing:0.5px;
+}
+.brand-sub{font-size:12.5px; color:#A7AEBB; margin-top:1px;}
+.period-chip{
+  font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:#D6DAE2;
+  border:1px solid #2C3140; border-radius:20px; padding:7px 16px;
+  white-space:nowrap;
+}
+.period-chip b{color:#fff; font-weight:500;}
+
+/* road-dash divider — signature motif */
+.road{
+  height:0; border-top:2px dashed #2A2F3B; margin:0;
+}
+
+/* ---------- NAV TABS ---------- */
+.tabnav{
+  display:flex; gap:6px; margin:30px 0 26px; flex-wrap:wrap;
+  border-bottom:1px solid var(--line); padding-bottom:0;
+}
+.tabnav button{
+  font-family:'IBM Plex Sans', sans-serif; font-size:14px; font-weight:500;
+  color:var(--muted); background:none; border:none; cursor:pointer;
+  padding:10px 4px; margin-right:22px; position:relative;
+  border-bottom:2px solid transparent;
+}
+.tabnav button.active{color:var(--ink); border-bottom:2px solid var(--signal);}
+.tabnav button:hover{color:var(--ink);}
+
+.tabpanel{display:none;}
+.tabpanel.active{display:block;}
+
+/* ---------- SECTION HEADINGS ---------- */
+.section-title{
+  font-family:'Space Grotesk', sans-serif; font-size:20px; font-weight:500;
+  margin:38px 0 6px;
+}
+.section-sub{color:var(--muted); font-size:13.5px; margin:0 0 18px;}
+
+/* ---------- HERO KPI TILES ---------- */
+.hero-grid{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:22px;
+}
+.hero-tile{
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  padding:18px 18px 14px; position:relative; overflow:hidden;
+}
+.hero-label{
+  font-size:11.5px; letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--muted); font-weight:500;
+}
+.hero-value-row{display:flex; align-items:baseline; gap:8px; margin-top:8px;}
+.hero-value{
+  font-family:'IBM Plex Mono', monospace; font-weight:500; font-size:28px; color:var(--ink);
+}
+.hero-unit{font-size:12.5px; color:var(--faint);}
+.hero-foot{display:flex; align-items:center; justify-content:space-between; margin-top:12px;}
+.delta{
+  font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:500;
+  padding:3px 9px; border-radius:20px; display:inline-flex; align-items:center; gap:4px;
+}
+.delta.good{background:var(--route-soft); color:var(--route-deep);}
+.delta.bad{background:var(--risk-soft); color:var(--risk-deep);}
+.delta.flat{background:#EEEFF2; color:var(--muted);}
+.spark{width:96px; height:30px; flex:none;}
+.spark path.line{fill:none; stroke-width:1.6; stroke-dasharray:3 3;}
+.spark .ping{transform-origin:center;}
+@keyframes pingpulse{
+  0%{ r:2.6; opacity:1;}
+  70%{ r:6.5; opacity:0;}
+  100%{ r:2.6; opacity:0;}
+}
+.ping-halo{animation:pingpulse 2.2s ease-out infinite;}
+
+/* ---------- INSIGHT CALLOUTS ---------- */
+.insight-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:24px;
+}
+.insight-card{
+  border-radius:14px; padding:18px 20px; border:1px solid var(--line); background:var(--surface);
+}
+.insight-card.warn{border-color:#F0CFC9; background:linear-gradient(0deg, var(--surface), var(--surface));}
+.insight-head{
+  display:flex; align-items:center; gap:8px; font-family:'Space Grotesk', sans-serif;
+  font-size:14.5px; font-weight:500; margin-bottom:10px;
+}
+.dot{width:9px; height:9px; border-radius:50%; flex:none;}
+.dot.risk{background:var(--risk);}
+.dot.route{background:var(--route);}
+.insight-card ul{margin:0; padding-left:18px;}
+.insight-card li{margin-bottom:7px; font-size:13.8px; color:var(--ink-soft);}
+.insight-card li b{color:var(--ink); font-weight:500;}
+
+/* ---------- METRIC CARDS (tab content) ---------- */
+.metric-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px;
+}
+.metric-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  padding:18px 20px 12px;
+}
+.metric-card.full{grid-column:1 / -1;}
+.metric-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;}
+.metric-name{font-weight:500; font-size:14.5px; color:var(--ink);}
+.metric-meta{font-size:11.5px; color:var(--faint); margin-top:2px;}
+.metric-now{
+  font-family:'IBM Plex Mono', monospace; font-size:22px; font-weight:500; color:var(--ink);
+  text-align:right;
+}
+.metric-now-unit{font-size:11px; color:var(--faint); font-weight:400; margin-left:3px;}
+.chart-box{position:relative; height:190px; margin-top:6px;}
+.chart-legend{display:flex; gap:14px; margin-top:10px; flex-wrap:wrap;}
+.chart-legend span{display:flex; align-items:center; gap:5px; font-size:11.5px; color:var(--muted);}
+.swatch{width:13px; height:0; border-top:2px solid; display:inline-block;}
+.swatch.dashed{border-top-style:dashed;}
+.swatch.solid{border-top-style:solid;}
+.meta-tag{
+  font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--meta-deep);
+  background:var(--meta-soft); border-radius:6px; padding:2px 8px; margin-top:5px; display:inline-block;
+}
+.stale-flag{
+  display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:var(--gold);
+  background:var(--gold-soft); border-radius:20px; padding:3px 10px; margin-top:8px;
+}
+.stale-flag::before{content:"●"; font-size:9px;}
+
+/* ---------- RA1000 badge strip ---------- */
+.badge-row{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;}
+.badge{
+  font-family:'IBM Plex Mono', monospace; font-size:12px; padding:7px 12px; border-radius:8px;
+  border:1px solid var(--line); text-align:center; min-width:64px;
+}
+.badge .m{display:block; font-size:10px; color:var(--faint); margin-bottom:4px; font-family:'IBM Plex Sans', sans-serif;}
+.badge.yes{background:var(--route-soft); border-color:#BCE6DD; color:var(--route-deep); font-weight:500;}
+.badge.no{background:var(--risk-soft); border-color:#F0C8C3; color:var(--risk-deep); font-weight:500;}
+
+/* ---------- FOOTER ---------- */
+.footnote{
+  margin-top:46px; padding-top:18px; border-top:1px dashed var(--line);
+  font-size:12px; color:var(--faint);
+}
+.footnote p{margin:4px 0;}
+
+@media (max-width:760px){
+  .hero-grid{grid-template-columns:1fr 1fr;}
+  .metric-grid{grid-template-columns:1fr;}
+  .insight-grid{grid-template-columns:1fr;}
+  .topbar-inner{align-items:flex-start;}
+}
+@media (max-width:480px){
+  .hero-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div>
+        <div class="brand-name">MOBILI</div>
+        <div class="brand-sub">Painel de indicadores de performance</div>
+      </div>
+    </div>
+    <div class="period-chip">Cobertura: <b>Jan/2025 – Mai/2026</b> · Indicadores_Atualizados.xls (com Meta)</div>
+  </div>
+</div>
+<div class="road"></div>
+
+<div class="wrap">
+
+  <nav class="tabnav" id="tabnav">
+    <button data-tab="geral" class="active">Visão geral</button>
+    <button data-tab="comercial">Comercial &amp; leads</button>
+    <button data-tab="financeiro">Financeiro &amp; risco</button>
+    <button data-tab="operacao">Operação &amp; qualidade</button>
+    <button data-tab="reuniao">Reunião de líderes</button>
+  </nav>
+
+  <!-- ===================== TAB: VISÃO GERAL ===================== -->
+  <section class="tabpanel active" id="tab-geral">
+    <h2 class="section-title">Destaques do mês — Maio/2026</h2>
+    <p class="section-sub">Variação calculada contra o mês anterior com dado disponível.</p>
+    <div class="hero-grid" id="heroGrid"></div>
+
+    <div class="insight-grid">
+      <div class="insight-card warn">
+        <div class="insight-head"><span class="dot risk"></span>Pontos de atenção</div>
+        <ul>
+          <li><b>Qualificação de leads despencou em maio:</b> de 69% para 27% dos leads, junto com queda de 34% no volume total (1.319 → 873). O funil de geração e qualificação merece investigação imediata.</li>
+          <li><b>Cancelamento de placas mais que dobrou desde fevereiro:</b> saiu de 0,96% para a faixa de 1,7–1,9% em março–maio.</li>
+          <li><b>Crescimento de base oscilando perto de zero:</b> 3 dos 5 meses de 2026 tiveram variação negativa, sinal de que novas adesões estão sendo neutralizadas por cancelamentos.</li>
+          <li><b>Indicadores operacionais sem atualização recente:</b> Custo do rastreador (desde Jan/26) e TMI de instalação (desde Nov/25) estão sem novos lançamentos — ver aba Operação.</li>
+        </ul>
+      </div>
+      <div class="insight-card">
+        <div class="insight-head"><span class="dot route"></span>Destaques positivos</div>
+        <ul>
+          <li><b>Faturamento recorrente cresce 20% no comparativo anual</b> (Mai/26 vs Mai/25), sustentando a trajetória de receita apesar da leve estabilidade mês a mês.</li>
+          <li><b>Selo RA1000 conquistado e mantido</b> desde fevereiro de 2026 — reputação de atendimento em trajetória sólida.</li>
+          <li><b>Geração de leads pelo marketing acelera continuamente:</b> de 106 para 756 leads/mês entre janeiro e maio (+613%), o melhor indicador de crescimento do período.</li>
+          <li><b>Sinistralidade recuou</b> de 25,7% em abril para 23,7% em maio, aliviando pressão sobre o custo do produto.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TAB: COMERCIAL ===================== -->
+  <section class="tabpanel" id="tab-comercial">
+    <h2 class="section-title">Aquisição e funil comercial</h2>
+    <p class="section-sub">Novas adesões, leads e crescimento de base — comparativo 2025 × 2026 quando disponível.</p>
+    <div class="metric-grid" id="gridComercial"></div>
+  </section>
+
+  <!-- ===================== TAB: FINANCEIRO ===================== -->
+  <section class="tabpanel" id="tab-financeiro">
+    <h2 class="section-title">Receita, inadimplência e risco</h2>
+    <p class="section-sub">Faturamento recorrente e indicadores de risco de carteira.</p>
+    <div class="metric-grid" id="gridFinanceiro"></div>
+  </section>
+
+  <!-- ===================== TAB: OPERAÇÃO ===================== -->
+  <section class="tabpanel" id="tab-operacao">
+    <h2 class="section-title">Operação, custos e qualidade de atendimento</h2>
+    <p class="section-sub">Indicadores de custo unitário, SLA de instalação e reputação. Alguns possuem cobertura incompleta — sinalizado em cada card.</p>
+    <div class="metric-grid" id="gridOperacao"></div>
+  </section>
+
+  <!-- ===================== TAB: REUNIÃO DE LÍDERES ===================== -->
+  <section class="tabpanel" id="tab-reuniao">
+    <h2 class="section-title">Reunião de líderes — 17/06/2026</h2>
+    <p class="section-sub">Registro das decisões e direcionamentos discutidos pela liderança.</p>
+
+    <div class="metric-card full" style="margin-top:18px;">
+      <div class="metric-name" style="margin-bottom:14px;">Participantes</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px;">
+        <div>
+          <div class="hero-label">Diretoria</div>
+          <div style="font-size:14px; margin-top:5px;">Gustavo, Rodrigo, William</div>
+        </div>
+        <div>
+          <div class="hero-label">Comercial</div>
+          <div style="font-size:14px; margin-top:5px;">Mateus</div>
+        </div>
+        <div>
+          <div class="hero-label">Administrativo</div>
+          <div style="font-size:14px; margin-top:5px;">Marina</div>
+        </div>
+        <div>
+          <div class="hero-label">Financeiro</div>
+          <div style="font-size:14px; margin-top:5px;">Breno, Jeisi</div>
+        </div>
+        <div>
+          <div class="hero-label">Marketing</div>
+          <div style="font-size:14px; margin-top:5px;">Daniela</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-grid" style="margin-top:16px;">
+      <div class="metric-card">
+        <div class="metric-name">Visão de 12 meses</div>
+        <div class="hero-value-row" style="margin-top:8px;">
+          <span class="hero-value">2.000</span><span class="hero-unit">vendas</span>
+        </div>
+        <p style="font-size:13px; color:var(--ink-soft); margin-top:10px; line-height:1.6;">Equivale a uma média de ~167 vendas/mês — abaixo do ritmo de Jan–Mai/26 (~196/mês), o que sugere uma meta deliberadamente conservadora, alinhada ao direcionamento de "focar na visão realista". Importante: isso mede vendas brutas; como o crescimento de base ainda oscila perto de zero (aba Comercial), atingir a meta não garante o mesmo avanço líquido na carteira ativa.</p>
+      </div>
+      <div class="metric-card">
+        <div class="metric-name">Canais comerciais</div>
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="badge yes" style="min-width:auto;">BEVI</span>
+          <span class="badge" style="min-width:auto;">CAMED</span>
+          <span class="badge" style="min-width:auto;">HULK</span>
+        </div>
+        <p style="font-size:13px; color:var(--ink-soft); margin-top:12px; line-height:1.6;">Foco comercial prioritário na <b>BEVI durante agosto</b>, conforme definido na reunião.</p>
+      </div>
+    </div>
+
+    <div class="metric-card full" style="margin-top:16px;">
+      <div class="metric-name">Marketing — foco em branding</div>
+      <p style="font-size:13px; color:var(--ink-soft); margin-top:10px; line-height:1.6;">Direcionamento de Daniela para os próximos meses: fortalecer a reputação no Reclame Aqui, reformular o site institucional, ampliar a presença no canal Hulk e explorar novas regiões geográficas para expansão da marca.</p>
+    </div>
+
+    <div class="metric-card full" style="margin-top:16px; border-color:#BCCBEF;">
+      <div class="metric-name">Sonho do Gustavo — divisão orçamentária por setor</div>
+      <p style="font-size:13px; color:var(--ink-soft); margin-top:10px; line-height:1.6;">Proposta para estruturar o orçamento financeiro por setor e categoria, com apresentação de ROI por investimento e separação clara entre investimento e custo operacional. Iniciativa em fase de planejamento — pode se tornar a próxima camada analítica deste painel, conectando-se diretamente aos indicadores de Faturamento Recorrente e CAC já acompanhados.</p>
+    </div>
+  </section>
+
+  <div class="footnote">
+    <p>Relatório atualizado a partir do arquivo <b>Indicadores_Atualizados.xls</b>, que passou a incluir a coluna de <b>Meta</b> — exibida nos gráficos como linha azul pontilhada e, quando disponível para o mês mais recente, como selo abaixo do valor realizado.</p>
+    <p>Valores em branco no original foram tratados como ausentes (sem lançamento) e não são exibidos como zero nos gráficos. Indicadores percentuais são exibidos em pontos percentuais (p.p.) quando a variação é entre dois períodos.</p>
+    <p>Correção de dados: a meta de "Faturamento Recorrente" lançada para Jan/2025 (valor 1,6) é incompatível com a escala do indicador (~R$1M) e foi tratada como erro de digitação — desconsiderada do gráfico.</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const DATA = {"Novas Adesões": [{"ano": 2025, "mes": 1, "valor": 170.0, "meta": null}, {"ano": 2025, "mes": 2, "valor": 212.0, "meta": null}, {"ano": 2025, "mes": 3, "valor": 184.0, "meta": null}, {"ano": 2025, "mes": 4, "valor": 235.0, "meta": null}, {"ano": 2025, "mes": 5, "valor": 285.0, "meta": null}, {"ano": 2025, "mes": 6, "valor": 247.0, "meta": null}, {"ano": 2025, "mes": 7, "valor": 219.0, "meta": null}, {"ano": 2025, "mes": 8, "valor": 249.0, "meta": null}, {"ano": 2025, "mes": 9, "valor": 241.0, "meta": null}, {"ano": 2025, "mes": 10, "valor": 261.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 261.0, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 138.0, "meta": 249.0}, {"ano": 2026, "mes": 2, "valor": 188.0, "meta": 255.0}, {"ano": 2026, "mes": 3, "valor": 244.0, "meta": 249.0}, {"ano": 2026, "mes": 4, "valor": 202.0, "meta": 268.0}, {"ano": 2026, "mes": 5, "valor": 208.0, "meta": 316.0}], "Inadimplência Total": [{"ano": 2025, "mes": 1, "valor": 1.4, "meta": null}, {"ano": 2025, "mes": 2, "valor": 1.7, "meta": null}, {"ano": 2025, "mes": 3, "valor": 1.2, "meta": null}, {"ano": 2025, "mes": 4, "valor": 1.5, "meta": null}, {"ano": 2025, "mes": 5, "valor": 1.2, "meta": null}, {"ano": 2025, "mes": 6, "valor": 1.5, "meta": null}, {"ano": 2025, "mes": 7, "valor": 0.8, "meta": null}, {"ano": 2025, "mes": 8, "valor": 1.3, "meta": null}, {"ano": 2025, "mes": 9, "valor": 1.8, "meta": null}, {"ano": 2025, "mes": 10, "valor": 2.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 1.6, "meta": null}, {"ano": 2025, "mes": 12, "valor": 1.5, "meta": null}, {"ano": 2026, "mes": 1, "valor": 1.6, "meta": 1.4}, {"ano": 2026, "mes": 2, "valor": 1.1, "meta": 2.4}, {"ano": 2026, "mes": 3, "valor": 1.59, "meta": 1.97}, {"ano": 2026, "mes": 4, "valor": 1.7, "meta": 1.93}, {"ano": 2026, "mes": 5, "valor": 1.42, "meta": 1.42}], "Custo Unitário Rastreador": [{"ano": 2025, "mes": 1, "valor": 25.34, "meta": 27.0}, {"ano": 2025, "mes": 2, "valor": 24.33, "meta": 27.0}, {"ano": 2025, "mes": 3, "valor": 22.52, "meta": 27.0}, {"ano": 2025, "mes": 4, "valor": 24.71, "meta": 27.0}, {"ano": 2025, "mes": 5, "valor": 24.05, "meta": 27.0}, {"ano": 2025, "mes": 6, "valor": 24.76, "meta": 27.0}, {"ano": 2025, "mes": 7, "valor": 28.5, "meta": 27.0}, {"ano": 2025, "mes": 8, "valor": 31.5, "meta": 27.0}, {"ano": 2025, "mes": 9, "valor": 30.46, "meta": 27.0}, {"ano": 2025, "mes": 10, "valor": 27.3, "meta": 27.0}, {"ano": 2025, "mes": 11, "valor": 32.11, "meta": 27.0}, {"ano": 2025, "mes": 12, "valor": 37.27, "meta": 27.0}, {"ano": 2026, "mes": 1, "valor": 34.0, "meta": 24.0}, {"ano": 2026, "mes": 2, "valor": null, "meta": 24.0}, {"ano": 2026, "mes": 3, "valor": null, "meta": 24.0}, {"ano": 2026, "mes": 4, "valor": null, "meta": 24.0}, {"ano": 2026, "mes": 5, "valor": null, "meta": 24.0}], "Tempo Medio de Instalação - TMI (7 dias)": [{"ano": 2025, "mes": 1, "valor": 54.11, "meta": 80.0}, {"ano": 2025, "mes": 2, "valor": 76.25, "meta": 80.0}, {"ano": 2025, "mes": 3, "valor": 49.18, "meta": 80.0}, {"ano": 2025, "mes": 4, "valor": 59.74, "meta": 80.0}, {"ano": 2025, "mes": 5, "valor": 57.64, "meta": 80.0}, {"ano": 2025, "mes": 6, "valor": 58.65, "meta": 80.0}, {"ano": 2025, "mes": 7, "valor": 58.06, "meta": 80.0}, {"ano": 2025, "mes": 8, "valor": 30.0, "meta": 80.0}, {"ano": 2025, "mes": 9, "valor": 40.0, "meta": 80.0}, {"ano": 2025, "mes": 10, "valor": 41.67, "meta": 80.0}, {"ano": 2025, "mes": 11, "valor": 32.26, "meta": 80.0}, {"ano": 2025, "mes": 12, "valor": null, "meta": 80.0}, {"ano": 2026, "mes": 1, "valor": null, "meta": null}, {"ano": 2026, "mes": 2, "valor": null, "meta": null}, {"ano": 2026, "mes": 3, "valor": null, "meta": null}, {"ano": 2026, "mes": 4, "valor": null, "meta": null}, {"ano": 2026, "mes": 5, "valor": null, "meta": null}], "Reclame Aqui": [{"ano": 2025, "mes": 1, "valor": 9.3, "meta": null}, {"ano": 2025, "mes": 2, "valor": null, "meta": null}, {"ano": 2025, "mes": 3, "valor": null, "meta": null}, {"ano": 2025, "mes": 4, "valor": null, "meta": null}, {"ano": 2025, "mes": 5, "valor": null, "meta": null}, {"ano": 2025, "mes": 6, "valor": null, "meta": null}, {"ano": 2025, "mes": 7, "valor": null, "meta": null}, {"ano": 2025, "mes": 8, "valor": null, "meta": null}, {"ano": 2025, "mes": 9, "valor": null, "meta": null}, {"ano": 2025, "mes": 10, "valor": null, "meta": null}, {"ano": 2025, "mes": 11, "valor": null, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 9.3, "meta": 9.5}, {"ano": 2026, "mes": 2, "valor": 9.4, "meta": 9.5}, {"ano": 2026, "mes": 3, "valor": 9.5, "meta": 9.5}, {"ano": 2026, "mes": 4, "valor": 9.5, "meta": 9.5}, {"ano": 2026, "mes": 5, "valor": 9.4, "meta": 9.5}], "Custo Médio - Assistência 24 hrs": [{"ano": 2025, "mes": 1, "valor": 268.0, "meta": 225.0}, {"ano": 2025, "mes": 2, "valor": 247.0, "meta": 225.0}, {"ano": 2025, "mes": 3, "valor": 253.0, "meta": 225.0}, {"ano": 2025, "mes": 4, "valor": 229.12, "meta": 225.0}, {"ano": 2025, "mes": 5, "valor": 217.0, "meta": 225.0}, {"ano": 2025, "mes": 6, "valor": 222.38, "meta": 225.0}, {"ano": 2025, "mes": 7, "valor": 231.0, "meta": 225.0}, {"ano": 2025, "mes": 8, "valor": 269.0, "meta": 225.0}, {"ano": 2025, "mes": 9, "valor": 262.0, "meta": 225.0}, {"ano": 2025, "mes": 10, "valor": 259.0, "meta": 225.0}, {"ano": 2025, "mes": 11, "valor": 260.0, "meta": 225.0}, {"ano": 2025, "mes": 12, "valor": 258.0, "meta": 225.0}, {"ano": 2026, "mes": 1, "valor": 295.0, "meta": 225.0}, {"ano": 2026, "mes": 2, "valor": 270.0, "meta": 229.0}, {"ano": 2026, "mes": 3, "valor": 276.0, "meta": 235.0}, {"ano": 2026, "mes": 4, "valor": 265.0, "meta": 245.0}, {"ano": 2026, "mes": 5, "valor": 250.76, "meta": 241.0}], "Taxa de Acionamento de Assist. 24 hrs": [{"ano": 2025, "mes": 1, "valor": 6.19, "meta": null}, {"ano": 2025, "mes": 2, "valor": 6.53, "meta": null}, {"ano": 2025, "mes": 3, "valor": 5.37, "meta": null}, {"ano": 2025, "mes": 4, "valor": 6.17, "meta": null}, {"ano": 2025, "mes": 5, "valor": 5.46, "meta": null}, {"ano": 2025, "mes": 6, "valor": 5.65, "meta": null}, {"ano": 2025, "mes": 7, "valor": 4.96, "meta": null}, {"ano": 2025, "mes": 8, "valor": 5.23, "meta": null}, {"ano": 2025, "mes": 9, "valor": 5.63, "meta": null}, {"ano": 2025, "mes": 10, "valor": 2.84, "meta": null}, {"ano": 2025, "mes": 11, "valor": 5.8, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 5.74, "meta": 5.0}, {"ano": 2026, "mes": 2, "valor": 5.19, "meta": 5.0}, {"ano": 2026, "mes": 3, "valor": 5.54, "meta": 5.0}, {"ano": 2026, "mes": 4, "valor": 5.35, "meta": 5.0}, {"ano": 2026, "mes": 5, "valor": 5.45, "meta": 5.0}], "Inadimplência UDM": [{"ano": 2025, "mes": 1, "valor": 3.77, "meta": 2.5}, {"ano": 2025, "mes": 2, "valor": 5.44, "meta": 2.5}, {"ano": 2025, "mes": 3, "valor": 3.87, "meta": 2.5}, {"ano": 2025, "mes": 4, "valor": 5.27, "meta": 2.5}, {"ano": 2025, "mes": 5, "valor": 3.56, "meta": 2.5}, {"ano": 2025, "mes": 6, "valor": 4.37, "meta": 2.5}, {"ano": 2025, "mes": 7, "valor": 3.46, "meta": 2.5}, {"ano": 2025, "mes": 8, "valor": 4.17, "meta": 2.5}, {"ano": 2025, "mes": 9, "valor": 4.99, "meta": 2.5}, {"ano": 2025, "mes": 10, "valor": 4.0, "meta": 2.5}, {"ano": 2025, "mes": 11, "valor": 5.6, "meta": 2.5}, {"ano": 2025, "mes": 12, "valor": 3.31, "meta": 2.5}, {"ano": 2026, "mes": 1, "valor": 3.87, "meta": 4.41}, {"ano": 2026, "mes": 2, "valor": 4.44, "meta": 5.96}, {"ano": 2026, "mes": 3, "valor": 3.79, "meta": 4.33}, {"ano": 2026, "mes": 4, "valor": 3.8, "meta": 5.0}, {"ano": 2026, "mes": 5, "valor": 4.08, "meta": 3.62}], "Cancelamento de placas.": [{"ano": 2025, "mes": 1, "valor": 2.35, "meta": 3.62}, {"ano": 2025, "mes": 2, "valor": 2.0, "meta": 1.8}, {"ano": 2025, "mes": 3, "valor": 1.74, "meta": 1.8}, {"ano": 2025, "mes": 4, "valor": 1.9, "meta": 1.8}, {"ano": 2025, "mes": 5, "valor": 1.5, "meta": 1.8}, {"ano": 2025, "mes": 6, "valor": 1.76, "meta": 1.8}, {"ano": 2025, "mes": 7, "valor": 2.0, "meta": 1.8}, {"ano": 2025, "mes": 8, "valor": 1.4, "meta": 1.8}, {"ano": 2025, "mes": 9, "valor": 1.7, "meta": 1.8}, {"ano": 2025, "mes": 10, "valor": 1.3, "meta": 1.7}, {"ano": 2025, "mes": 11, "valor": 1.2, "meta": 1.8}, {"ano": 2025, "mes": 12, "valor": 1.17, "meta": 1.8}, {"ano": 2026, "mes": 1, "valor": 0.88, "meta": 1.8}, {"ano": 2026, "mes": 2, "valor": 0.96, "meta": 1.94}, {"ano": 2026, "mes": 3, "valor": 1.9, "meta": 1.38}, {"ano": 2026, "mes": 4, "valor": 1.73, "meta": 1.62}, {"ano": 2026, "mes": 5, "valor": 1.91, "meta": 1.41}], "Faturamento Recorrente": [{"ano": 2025, "mes": 1, "valor": 953024.0, "meta": null}, {"ano": 2025, "mes": 2, "valor": 927481.0, "meta": null}, {"ano": 2025, "mes": 3, "valor": 941946.0, "meta": null}, {"ano": 2025, "mes": 4, "valor": 928803.0, "meta": null}, {"ano": 2025, "mes": 5, "valor": 941549.0, "meta": null}, {"ano": 2025, "mes": 6, "valor": 969341.0, "meta": null}, {"ano": 2025, "mes": 7, "valor": 970773.0, "meta": null}, {"ano": 2025, "mes": 8, "valor": 986646.0, "meta": null}, {"ano": 2025, "mes": 9, "valor": 1001883.0, "meta": null}, {"ano": 2025, "mes": 10, "valor": 1031300.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 980430.0, "meta": null}, {"ano": 2025, "mes": 12, "valor": 1040022.0, "meta": null}, {"ano": 2026, "mes": 1, "valor": 1118773.0, "meta": 1130189.0}, {"ano": 2026, "mes": 2, "valor": 1107551.0, "meta": 1133642.0}, {"ano": 2026, "mes": 3, "valor": 1201705.0, "meta": 1131537.0}, {"ano": 2026, "mes": 4, "valor": 1132484.0, "meta": 1131476.0}, {"ano": 2026, "mes": 5, "valor": 1131231.0, "meta": 1134112.0}], "Crescimento de Base": [{"ano": 2026, "mes": 1, "valor": -2.36, "meta": 1.09}, {"ano": 2026, "mes": 2, "valor": -0.8, "meta": 0.71}, {"ano": 2026, "mes": 3, "valor": 1.01, "meta": 0.89}, {"ano": 2026, "mes": 4, "valor": -0.54, "meta": 0.99}, {"ano": 2026, "mes": 5, "valor": 0.36, "meta": 2.29}], "RA 1000": [{"ano": 2026, "mes": 1, "valor": 0.0, "meta": 1.0}, {"ano": 2026, "mes": 2, "valor": 1.0, "meta": 1.0}, {"ano": 2026, "mes": 3, "valor": 1.0, "meta": 1.0}, {"ano": 2026, "mes": 4, "valor": 1.0, "meta": 1.0}, {"ano": 2026, "mes": 5, "valor": 1.0, "meta": 1.0}], "Churn - Taxa de Perda Efetiva": [{"ano": 2026, "mes": 1, "valor": 3.74, "meta": 3.99}, {"ano": 2026, "mes": 2, "valor": 3.9, "meta": 2.43}, {"ano": 2026, "mes": 3, "valor": 3.85, "meta": 3.6}, {"ano": 2026, "mes": 4, "valor": 3.09, "meta": 4.67}, {"ano": 2026, "mes": 5, "valor": 3.53, "meta": 3.31}], "Volume de Lead Gerados pelo Marketing": [{"ano": 2026, "mes": 1, "valor": 106.0, "meta": null}, {"ano": 2026, "mes": 2, "valor": 433.0, "meta": null}, {"ano": 2026, "mes": 3, "valor": 466.0, "meta": null}, {"ano": 2026, "mes": 4, "valor": 628.0, "meta": null}, {"ano": 2026, "mes": 5, "valor": 756.0, "meta": null}], "Novas Adesões - Internas": [{"ano": 2025, "mes": 1, "valor": 45.0, "meta": null}, {"ano": 2025, "mes": 2, "valor": 44.0, "meta": null}, {"ano": 2025, "mes": 3, "valor": 49.0, "meta": null}, {"ano": 2025, "mes": 4, "valor": 69.0, "meta": null}, {"ano": 2025, "mes": 5, "valor": 128.0, "meta": null}, {"ano": 2025, "mes": 6, "valor": 106.0, "meta": null}, {"ano": 2025, "mes": 7, "valor": 85.0, "meta": null}, {"ano": 2025, "mes": 8, "valor": 104.0, "meta": null}, {"ano": 2025, "mes": 9, "valor": 103.0, "meta": null}, {"ano": 2025, "mes": 10, "valor": 102.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 140.0, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 41.0, "meta": 111.0}, {"ano": 2026, "mes": 2, "valor": 81.0, "meta": 114.0}, {"ano": 2026, "mes": 3, "valor": 132.0, "meta": 111.0}, {"ano": 2026, "mes": 4, "valor": 90.0, "meta": 119.0}, {"ano": 2026, "mes": 5, "valor": 110.0, "meta": 141.0}], "Sinistralidade": [{"ano": 2026, "mes": 1, "valor": 22.2, "meta": 19.43}, {"ano": 2026, "mes": 2, "valor": 21.7, "meta": 17.92}, {"ano": 2026, "mes": 3, "valor": 21.6, "meta": 22.47}, {"ano": 2026, "mes": 4, "valor": 25.7, "meta": 22.58}, {"ano": 2026, "mes": 5, "valor": 23.7, "meta": 23.12}], "% Leads Qualificados": [{"ano": 2026, "mes": 1, "valor": 86.0, "meta": null}, {"ano": 2026, "mes": 2, "valor": 89.0, "meta": null}, {"ano": 2026, "mes": 3, "valor": 76.0, "meta": null}, {"ano": 2026, "mes": 4, "valor": 69.0, "meta": null}, {"ano": 2026, "mes": 5, "valor": 27.0, "meta": null}], "Total de Leads": [{"ano": 2026, "mes": 1, "valor": 236.0, "meta": null}, {"ano": 2026, "mes": 2, "valor": 756.0, "meta": null}, {"ano": 2026, "mes": 3, "valor": 1222.0, "meta": null}, {"ano": 2026, "mes": 4, "valor": 1319.0, "meta": null}, {"ano": 2026, "mes": 5, "valor": 873.0, "meta": null}]};
+const GS_TARGETS = {"% Análise no Prazo - GS": 85.0, "% Indeferimento - GS": 25.0, "% Regulagem no Prazo - GS": 85.0, "% De Ajustes - GS": 10.0, "TME (tempo médio de espera) - GS": 5.0, "CSAT - GS": 3.0, "NPS - GS": 70.0};
+
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+const INK_MUTED = 'rgba(58,65,80,0.55)';
+const GRID = 'rgba(58,65,80,0.08)';
+const SIGNAL = '#FF6A2B';
+const ROUTE = '#13988A';
+const RISK = '#D5453C';
+const INK = '#12161F';
+
+function seriesByYear(key, year){
+  return (DATA[key]||[]).filter(p=>p.ano===year).sort((a,b)=>a.mes-b.mes);
+}
+function lastValid(key, uptoAno, uptoMes){
+  const arr = (DATA[key]||[]).filter(p=>p.valor!==null && (p.ano<uptoAno || (p.ano===uptoAno && p.mes<=uptoMes)));
+  return arr.length ? arr[arr.length-1] : null;
+}
+function prevValid(key, point){
+  const arr = (DATA[key]||[]).filter(p=>p.valor!==null && (p.ano<point.ano || (p.ano===point.ano && p.mes<point.mes)));
+  return arr.length ? arr[arr.length-1] : null;
+}
+function fmtNum(v, decimals){
+  return Number(v).toLocaleString('pt-BR', {minimumFractionDigits:decimals, maximumFractionDigits:decimals});
+}
+function fmtCompactCurrency(v){
+  return 'R$ ' + (v/1e6).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) + 'M';
+}
+function monthLabel(p){ return MESES[p.mes-1]+'/'+String(p.ano).slice(2); }
+
+/* ---------- sparkline SVG (signature ping-route) ---------- */
+function sparkSVG(key, color){
+  const pts = (DATA[key]||[]).filter(p=>p.valor!==null);
+  if(pts.length<2) return '';
+  const vals = pts.map(p=>p.valor);
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const range = (max-min)||1;
+  const w=96,h=30,pad=4;
+  const coords = pts.map((p,i)=>{
+    const x = pad + (i/(pts.length-1))*(w-2*pad);
+    const y = h-pad - ((p.valor-min)/range)*(h-2*pad);
+    return [x,y];
+  });
+  const d = coords.map((c,i)=> (i===0?'M':'L')+c[0].toFixed(1)+','+c[1].toFixed(1)).join(' ');
+  const last = coords[coords.length-1];
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+    <path class="line" d="${d}" stroke="${color}"/>
+    <circle class="ping-halo" cx="${last[0]}" cy="${last[1]}" r="2.6" fill="${color}" opacity="0.5"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="2.6" fill="${color}"/>
+  </svg>`;
+}
+
+/* ---------- HERO TILES ---------- */
+const heroDefs = [
+  {key:'Faturamento Recorrente', label:'Faturamento recorrente', unit:'R$', decimals:0, good:'up', fmt:v=>fmtCompactCurrency(v), color:ROUTE, deltaType:'pct'},
+  {key:'Novas Adesões', label:'Novas adesões', unit:'contratos', decimals:0, good:'up', fmt:v=>fmtNum(v,0), color:SIGNAL, deltaType:'pct'},
+  {key:'Inadimplência Total', label:'Inadimplência total', unit:'%', decimals:2, good:'down', fmt:v=>fmtNum(v,2)+'%', color:RISK, deltaType:'pp'},
+  {key:'Churn - Taxa de Perda Efetiva', label:'Churn (perda efetiva)', unit:'%', decimals:2, good:'down', fmt:v=>fmtNum(v,2)+'%', color:RISK, deltaType:'pp'},
+  {key:'Sinistralidade', label:'Sinistralidade', unit:'%', decimals:1, good:'down', fmt:v=>fmtNum(v,1)+'%', color:SIGNAL, deltaType:'pp'},
+  {key:'% Leads Qualificados', label:'Leads qualificados', unit:'%', decimals:0, good:'up', fmt:v=>fmtNum(v,0)+'%', color:ROUTE, deltaType:'pp'},
+];
+
+function renderHero(){
+  const grid = document.getElementById('heroGrid');
+  grid.innerHTML = heroDefs.map(def=>{
+    const arr = (DATA[def.key]||[]).filter(p=>p.valor!==null);
+    const cur = arr[arr.length-1];
+    const prev = prevValid(def.key, cur);
+    let deltaHtml = '<span class="delta flat">sem comparativo</span>';
+    if(prev){
+      let diff, txt, cls;
+      if(def.deltaType==='pp'){
+        diff = cur.valor - prev.valor;
+        const isGood = def.good==='up' ? diff>=0 : diff<=0;
+        cls = Math.abs(diff)<0.005 ? 'flat' : (isGood?'good':'bad');
+        txt = (diff>=0?'+':'') + fmtNum(diff,2) + ' p.p.';
+      } else {
+        diff = prev.valor!==0 ? (cur.valor-prev.valor)/Math.abs(prev.valor)*100 : 0;
+        const isGood = def.good==='up' ? diff>=0 : diff<=0;
+        cls = Math.abs(diff)<0.05 ? 'flat' : (isGood?'good':'bad');
+        txt = (diff>=0?'+':'') + fmtNum(diff,1) + '%';
+      }
+      deltaHtml = `<span class="delta ${cls}">${txt} vs ${monthLabel(prev)}</span>`;
+    }
+    const metaPt = (DATA[def.key]||[]).find(p=>p.ano===cur.ano && p.mes===cur.mes);
+    const metaHtml = (metaPt && metaPt.meta!==null && metaPt.meta!==undefined)
+      ? `<div class="meta-tag" style="margin-top:6px;">Meta: ${def.fmt(metaPt.meta)}</div>` : '';
+    return `<div class="hero-tile">
+      <div class="hero-label">${def.label}</div>
+      <div class="hero-value-row">
+        <span class="hero-value">${def.fmt(cur.valor)}</span>
+      </div>
+      ${metaHtml}
+      <div class="hero-foot">
+        ${deltaHtml}
+        ${sparkSVG(def.key, def.color)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- METRIC CARD + CHART builder ---------- */
+let chartCounter = 0;
+function buildLegend(items){
+  // items: [{label, color, dashed}]
+  return `<div class="chart-legend">${items.map(it=>
+    `<span><span class="swatch ${it.dashed?'dashed':'solid'}" style="border-color:${it.color};"></span>${it.label}</span>`
+  ).join('')}</div>`;
+}
+
+function metaTagHtml(key, cur){
+  // Show the Meta value for the same month as the current value, if one was set.
+  if(!cur) return '';
+  const pt = (DATA[key]||[]).find(p=>p.ano===cur.ano && p.mes===cur.mes);
+  if(!pt || pt.meta===null || pt.meta===undefined) return '';
+  return `<span class="meta-tag">Meta ${monthLabel(cur)}: ${fmtNum(pt.meta, pt.meta%1===0?0:2)}</span>`;
+}
+
+function metricCardYoY(key, label, unit, decimals, color2025, color2026, opts){
+  opts = opts || {};
+  chartCounter++;
+  const id = 'c'+chartCounter;
+  const y25 = seriesByYear(key, 2025);
+  const y26 = seriesByYear(key, 2026);
+  const allValid = (DATA[key]||[]).filter(p=>p.valor!==null);
+  const cur = allValid[allValid.length-1];
+  const prev = cur ? prevValid(key, cur) : null;
+  const hasMeta = y26.some(p=>p.meta!==null && p.meta!==undefined);
+  let deltaHtml = '';
+  if(cur && prev){
+    const diff = opts.ppDelta ? cur.valor-prev.valor : (prev.valor!==0 ? (cur.valor-prev.valor)/Math.abs(prev.valor)*100 : 0);
+    const isGood = opts.good==='up' ? diff>=0 : diff<=0;
+    const cls = Math.abs(diff) < (opts.ppDelta?0.01:0.05) ? 'flat' : (isGood?'good':'bad');
+    const txt = opts.ppDelta ? ((diff>=0?'+':'')+fmtNum(diff,2)+' p.p.') : ((diff>=0?'+':'')+fmtNum(diff,1)+'%');
+    deltaHtml = `<span class="delta ${cls}" style="margin-top:6px;">${txt} vs ${monthLabel(prev)}</span>`;
+  }
+  const staleHtml = opts.staleNote ? `<div class="stale-flag">${opts.staleNote}</div>` : '';
+  const legendItems = [];
+  if(y25.length) legendItems.push({label:'2025', color:'#C7CCD4', dashed:true});
+  legendItems.push({label:'2026', color:color2026, dashed:false});
+  if(hasMeta) legendItems.push({label:'Meta', color:'var(--meta)', dashed:true});
+  const html = `<div class="metric-card${opts.full?' full':''}">
+    <div class="metric-top">
+      <div>
+        <div class="metric-name">${label}</div>
+        <div class="metric-meta">${opts.metaNote || (unit==='R$'?'valores em R$':'unidade: '+unit)}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="metric-now">${cur?fmtNum(cur.valor,decimals):'—'}<span class="metric-now-unit">${unit!=='R$'?unit:''}</span></div>
+        ${deltaHtml}
+        ${metaTagHtml(key, cur)}
+      </div>
+    </div>
+    ${staleHtml}
+    ${buildLegend(legendItems)}
+    <div class="chart-box"><canvas id="${id}" role="img" aria-label="Gráfico mensal de ${label}, comparando 2025, 2026${hasMeta?' e meta':''}">Série mensal de ${label}.</canvas></div>
+  </div>`;
+  return {html, render: ()=>{
+    const metaSeries = MESES.map((_,i)=>{ const p=y26.find(p=>p.mes===i+1); return p && p.meta!==null && p.meta!==undefined ? p.meta : null; });
+    new Chart(document.getElementById(id), {
+      type: opts.bar ? 'bar' : 'line',
+      data:{
+        labels: MESES,
+        datasets:[
+          ...(y25.length? [{
+            label:'2025',
+            data: MESES.map((_,i)=>{ const p=y25.find(p=>p.mes===i+1); return p? p.valor : null; }),
+            borderColor:'#C7CCD4', backgroundColor: opts.bar? '#E3E6EA':'rgba(0,0,0,0)',
+            borderWidth:2, pointRadius:0, tension:0.3, borderDash:[4,3], spanGaps:false
+          }] : []),
+          {
+            label:'2026',
+            data: MESES.map((_,i)=>{ const p=y26.find(p=>p.mes===i+1); return p? p.valor : null; }),
+            borderColor: color2026, backgroundColor: opts.bar? color2026 : 'rgba(255,106,43,0.08)',
+            borderWidth:2.4, pointRadius:2.5, pointBackgroundColor:color2026, tension:0.3, fill: !opts.bar, spanGaps:false
+          },
+          ...(hasMeta? [{
+            label:'Meta',
+            data: metaSeries,
+            borderColor:'#2D6CDF', backgroundColor:'rgba(0,0,0,0)', type:'line',
+            borderWidth:2, pointRadius:0, tension:0, borderDash:[6,4], spanGaps:true, order:0
+          }] : [])
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        interaction:{mode:'index', intersect:false},
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:ctx=> ' '+ctx.dataset.label+': '+fmtNum(ctx.parsed.y,decimals)+(unit!=='R$'&&unit!=='contratos'&&unit!=='leads'?(' '+unit):'')}}
+        },
+        scales:{
+          x:{ticks:{color:INK_MUTED,font:{size:10.5}}, grid:{display:false}, border:{color:'transparent'}},
+          y:{ticks:{color:INK_MUTED,font:{size:10.5}}, grid:{color:GRID}, border:{color:'transparent'}}
+        }
+      }
+    });
+  }};
+}
+
+function metricCardSingleYear(key, label, unit, decimals, color, opts){
+  opts = opts || {};
+  chartCounter++;
+  const id='c'+chartCounter;
+  const y26 = seriesByYear(key, 2026);
+  const allValid = (DATA[key]||[]).filter(p=>p.valor!==null);
+  const cur = allValid[allValid.length-1];
+  const prev = cur ? prevValid(key, cur) : null;
+  const hasMeta = y26.some(p=>p.meta!==null && p.meta!==undefined);
+  let deltaHtml='';
+  if(cur && prev){
+    const diff = opts.ppDelta ? cur.valor-prev.valor : (prev.valor!==0 ? (cur.valor-prev.valor)/Math.abs(prev.valor)*100 : 0);
+    const isGood = opts.good==='up' ? diff>=0 : diff<=0;
+    const cls = Math.abs(diff) < (opts.ppDelta?0.01:0.05) ? 'flat' : (isGood?'good':'bad');
+    const txt = opts.ppDelta ? ((diff>=0?'+':'')+fmtNum(diff,2)+' p.p.') : ((diff>=0?'+':'')+fmtNum(diff,1)+'%');
+    deltaHtml = `<span class="delta ${cls}" style="margin-top:6px;">${txt} vs ${monthLabel(prev)}</span>`;
+  }
+  const legendItems = [{label:'2026', color:color, dashed:false}];
+  if(hasMeta) legendItems.push({label:'Meta', color:'var(--meta)', dashed:true});
+  const html = `<div class="metric-card${opts.full?' full':''}">
+    <div class="metric-top">
+      <div>
+        <div class="metric-name">${label}</div>
+        <div class="metric-meta">${opts.metaNote || 'série iniciada em 2026 · unidade: '+unit}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="metric-now">${cur?fmtNum(cur.valor,decimals):'—'}<span class="metric-now-unit">${unit!=='R$'?unit:''}</span></div>
+        ${deltaHtml}
+        ${metaTagHtml(key, cur)}
+      </div>
+    </div>
+    ${hasMeta?buildLegend(legendItems):''}
+    <div class="chart-box"><canvas id="${id}" role="img" aria-label="Gráfico mensal de ${label} em 2026${hasMeta?', com meta':''}">Série mensal de ${label} em 2026.</canvas></div>
+  </div>`;
+  return {html, render:()=>{
+    const pts = y26;
+    new Chart(document.getElementById(id), {
+      type: opts.bar?'bar':'line',
+      data:{
+        labels: pts.map(p=>MESES[p.mes-1]),
+        datasets:[
+          {
+            label:'2026', data: pts.map(p=>p.valor),
+            borderColor:color, backgroundColor: opts.bar? color : 'rgba(19,152,138,0.10)',
+            borderWidth:2.4, pointRadius:3, pointBackgroundColor:color, tension:0.3, fill:!opts.bar
+          },
+          ...(hasMeta? [{
+            label:'Meta', data: pts.map(p=> p.meta!==null && p.meta!==undefined ? p.meta : null),
+            borderColor:'#2D6CDF', backgroundColor:'rgba(0,0,0,0)', type:'line',
+            borderWidth:2, pointRadius:0, tension:0, borderDash:[6,4], spanGaps:true, order:0
+          }] : [])
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fmtNum(ctx.parsed.y,decimals)+(unit!=='R$'?(' '+unit):'')}}},
+        scales:{
+          x:{ticks:{color:INK_MUTED,font:{size:10.5}}, grid:{display:false}, border:{color:'transparent'}},
+          y:{ticks:{color:INK_MUTED,font:{size:10.5}}, grid:{color:GRID}, border:{color:'transparent'}}
+        }
+      }
+    });
+  }};
+}
+
+/* ---------- BUILD TABS ---------- */
+const tabRenders = {comercial:[], financeiro:[], operacao:[]};
+
+function buildGrid(containerId, cards, tabKey){
+  const el = document.getElementById(containerId);
+  el.innerHTML = cards.map(c=>c.html).join('');
+  cards.forEach(c=>tabRenders[tabKey].push(c.render));
+}
+
+// COMERCIAL
+buildGrid('gridComercial', [
+  metricCardYoY('Novas Adesões','Novas adesões (total)','contratos',0, '#C7CCD4', SIGNAL, {good:'up'}),
+  metricCardYoY('Novas Adesões - Internas','Novas adesões — internas','contratos',0,'#C7CCD4', ROUTE, {good:'up'}),
+  metricCardSingleYear('Total de Leads','Total de leads','leads',0, INK, {good:'up', full:false}),
+  metricCardSingleYear('% Leads Qualificados','Leads qualificados','%',0, RISK, {good:'up', ppDelta:true}),
+  metricCardSingleYear('Volume de Lead Gerados pelo Marketing','Leads via marketing','leads',0, ROUTE, {good:'up'}),
+  metricCardSingleYear('Crescimento de Base','Crescimento de base','%',2, SIGNAL, {good:'up', ppDelta:true, bar:true}),
+], 'comercial');
+
+// FINANCEIRO
+buildGrid('gridFinanceiro', [
+  metricCardYoY('Faturamento Recorrente','Faturamento recorrente','R$',0,'#C7CCD4', ROUTE, {good:'up', full:true, metaNote:'valores mensais em R$'}),
+  metricCardYoY('Inadimplência Total','Inadimplência total','%',2,'#C7CCD4', RISK, {good:'down', ppDelta:true}),
+  metricCardYoY('Inadimplência UDM','Inadimplência UDM (12 meses)','%',2,'#C7CCD4', RISK, {good:'down', ppDelta:true}),
+  metricCardYoY('Cancelamento de placas.','Cancelamento de placas','%',2,'#C7CCD4', SIGNAL, {good:'down', ppDelta:true}),
+  metricCardSingleYear('Churn - Taxa de Perda Efetiva','Churn — taxa de perda efetiva','%',2, RISK, {good:'down', ppDelta:true}),
+  metricCardSingleYear('Sinistralidade','Sinistralidade','%',1, SIGNAL, {good:'down', ppDelta:true}),
+], 'financeiro');
+
+// OPERAÇÃO
+const opCards = [
+  metricCardYoY('Custo Unitário Rastreador','Custo unitário do rastreador','R$',2,'#C7CCD4', SIGNAL, {good:'down', metaNote:'sem novos lançamentos após Jan/2026'}),
+  metricCardYoY('Custo Médio - Assistência 24 hrs','Custo médio — assistência 24h','R$',2,'#C7CCD4', RISK, {good:'down'}),
+  metricCardYoY('Taxa de Acionamento de Assist. 24 hrs','Taxa de acionamento — assist. 24h','%',2,'#C7CCD4', SIGNAL, {good:'down', ppDelta:true}),
+  metricCardYoY('Tempo Medio de Instalação - TMI (7 dias)','TMI — instalações no prazo de 7 dias','%',1,'#C7CCD4', ROUTE, {good:'up', metaNote:'sem lançamentos desde Nov/2025'}),
+  metricCardYoY('Reclame Aqui','Nota Reclame Aqui','pts',2,'#C7CCD4', ROUTE, {good:'up', metaNote:'nota de 0 a 10 · cobertura parcial em 2025'}),
+];
+document.getElementById('gridOperacao').innerHTML = opCards.map(c=>c.html).join('') + `
+  <div class="metric-card full">
+    <div class="metric-top">
+      <div>
+        <div class="metric-name">Selo RA1000</div>
+        <div class="metric-meta">indicador binário · conquistado a partir de fevereiro/2026</div>
+      </div>
+    </div>
+    <div class="badge-row" id="ra1000Row"></div>
+  </div>
+  <div class="metric-card full">
+    <div class="metric-top">
+      <div>
+        <div class="metric-name">Metas — Gestão de Sinistros (GS)</div>
+        <div class="metric-meta">novos indicadores definidos em 2026 · aguardando primeiro resultado realizado</div>
+      </div>
+    </div>
+    <div class="badge-row" id="gsTargetsRow"></div>
+  </div>`;
+opCards.forEach(c=>tabRenders.operacao.push(c.render));
+
+function renderGSTargets(){
+  const labels = {
+    '% Análise no Prazo - GS':'Análise no prazo',
+    '% Indeferimento - GS':'Indeferimento',
+    '% Regulagem no Prazo - GS':'Regulagem no prazo',
+    '% De Ajustes - GS':'De ajustes',
+    'TME (tempo médio de espera) - GS':'TME (espera)',
+    'CSAT - GS':'CSAT',
+    'NPS - GS':'NPS'
+  };
+  document.getElementById('gsTargetsRow').innerHTML = Object.entries(GS_TARGETS).map(([key,val])=>{
+    const isPct = key.startsWith('%');
+    return `<div class="badge" style="border-color:var(--meta-soft); color:var(--meta-deep); min-width:96px;">
+      <span class="m">${labels[key]||key}</span>${fmtNum(val,0)}${isPct?'%':''}
+    </div>`;
+  }).join('');
+}
+
+function renderRA1000(){
+  const pts = seriesByYear('RA 1000', 2026);
+  document.getElementById('ra1000Row').innerHTML = pts.map(p=>{
+    const ok = p.valor===1;
+    return `<div class="badge ${ok?'yes':'no'}"><span class="m">${MESES[p.mes-1]}/26</span>${ok?'Sim':'Não'}</div>`;
+  }).join('');
+}
+
+/* ---------- INIT ---------- */
+renderHero();
+renderRA1000();
+renderGSTargets();
+
+const renderedTabs = {geral:true};
+
+document.getElementById('tabnav').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-tab]');
+  if(!btn) return;
+  document.querySelectorAll('#tabnav button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  // lazy-init Chart.js only once the tab's canvases are actually visible,
+  // otherwise Chart.js measures a 0x0 container and renders blank charts.
+  const key = btn.dataset.tab;
+  if(!renderedTabs[key] && tabRenders[key]){
+    renderedTabs[key] = true;
+    requestAnimationFrame(()=> tabRenders[key].forEach(fn=>fn()) );
+  }
+});
+</script>
+
+
+</body>
+</html>
