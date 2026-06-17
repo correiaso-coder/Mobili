@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA Aplicada — Automação e Agentes Autônomos</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg:#0b0d12; --surf:#111318; --surf2:#181b24; --surf3:#1e2230;
+  --bdr:#252a38; --bdr2:#2e3448;
+  --blue:#4f9eff; --purple:#7c5cfc; --green:#22d3a0; --yellow:#f5c518;
+  --orange:#ff8c42; --red:#ff5f6d; --cyan:#38bdf8;
+  --text:#e8eaf2; --sub:#9198b8; --muted:#555d7a;
+  --sans:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+  --r8:8px; --r12:12px; --r16:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;font-size:14px;}
+
+/* ══ HEADER ══ */
+#hdr{
+  position:sticky;top:0;z-index:200;
+  background:rgba(11,13,18,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;height:60px;gap:20px;
+}
+.hlogo{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.hlogo-icon{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+}
+.hlogo-name{font-size:14px;font-weight:600;letter-spacing:-.3px;}
+.hlogo-tag{font-size:10px;color:var(--muted);font-family:var(--mono);}
+.hbar{display:flex;align-items:center;gap:16px;}
+.hprog{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.hprog-lbl{font-size:10px;color:var(--sub);font-family:var(--mono);}
+.hprog-track{width:140px;height:5px;background:var(--bdr);border-radius:99px;overflow:hidden;}
+.hprog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:99px;transition:width .6s ease;}
+.hbtn{
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  padding:7px 14px;border-radius:7px;cursor:pointer;border:none;
+  transition:all .18s;
+}
+.hbtn-ghost{background:transparent;border:1px solid var(--bdr);color:var(--sub);}
+.hbtn-ghost:hover{border-color:var(--text);color:var(--text);}
+.hbtn-dash{background:var(--surf2);border:1px solid var(--bdr2);color:var(--text);}
+.hbtn-dash:hover{background:var(--surf3);}
+.hbtn-dash.active{background:rgba(79,158,255,.12);border-color:rgba(79,158,255,.4);color:var(--blue);}
+
+/* ══ LAYOUT ══ */
+#wrap{display:flex;flex:1;min-height:0;}
+
+/* ══ SIDEBAR ══ */
+#nav{
+  width:260px;min-width:260px;
+  background:var(--surf);
+  border-right:1px solid var(--bdr);
+  padding:16px 0 40px;
+  overflow-y:auto;
+  position:sticky;top:60px;
+  height:calc(100vh - 60px);
+}
+.nmod{margin-bottom:4px;}
+.nmod-hd{
+  padding:10px 18px 5px;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;user-select:none;
+}
+.nmod-hd-l{display:flex;align-items:center;gap:7px;}
+.nmod-num{font-family:var(--mono);font-size:10px;color:var(--muted);}
+.nmod-name{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.8px;}
+.nmod-badge{
+  font-family:var(--mono);font-size:10px;
+  padding:2px 7px;border-radius:99px;
+  background:var(--surf2);color:var(--muted);border:1px solid var(--bdr);
+  transition:all .2s;
+}
+.nmod-badge.done{background:rgba(34,211,160,.12);color:var(--green);border-color:rgba(34,211,160,.3);}
+.nmod-lessons{overflow:hidden;transition:max-height .25s ease;}
+.nitem{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 18px 8px 28px;
+  cursor:pointer;font-size:12px;color:var(--muted);
+  border-left:2px solid transparent;
+  transition:all .15s;
+}
+.nitem:hover{background:var(--surf2);color:var(--text);}
+.nitem.active{background:var(--surf2);color:var(--blue);border-left-color:var(--blue);}
+.nitem.done{color:var(--green);}
+.nitem-chk{font-size:11px;min-width:14px;line-height:1;}
+.nmod-locked{opacity:.35;pointer-events:none;}
+
+/* ══ MAIN ══ */
+#main{flex:1;padding:36px 44px;overflow-y:auto;max-width:880px;}
+.view{display:none;}
+.view.active{display:block;}
+
+/* ══ DASHBOARD ══ */
+.db-greeting{margin-bottom:28px;}
+.db-greeting h1{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px;}
+.db-greeting p{color:var(--sub);font-size:14px;}
+.db-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+.db-stat{
+  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r12);
+  padding:18px 20px;
+}
+.db-stat-val{font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1;margin-bottom:4px;}
+.db-stat-lbl{font-size:11px;color:var(--sub);font-family:var(--mono);}
+.db-stat-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.c-blue{color:var(--blue);} .c-green{color:var(--green);} .c-purple{color:var(--purple);} .c-yellow{color:var(--yellow);}
+
+.db-mods{margin-bottom:28px;}
+.db-sec-title{font-size:12px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;font-family:var(--mono);}
+.db-mod-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.db-mod-card{
+  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r12);
+  padding:16px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;
+}
+.db-mod-card:hover{border-color:var(--bdr2);background:var(--surf2);}
+.db-mod-card.active-mod{border-color:rgba(79,158,255,.4);background:rgba(79,158,255,.05);}
+.db-mod-card.done-mod{border-color:rgba(34,211,160,.3);}
+.db-mod-card.locked-mod{opacity:.4;cursor:default;pointer-events:none;}
+.db-mod-icon{font-size:22px;margin-bottom:10px;}
+.db-mod-num{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:3px;}
+.db-mod-name{font-size:12px;font-weight:600;line-height:1.3;margin-bottom:10px;}
+.db-mod-track{height:3px;background:var(--bdr);border-radius:99px;overflow:hidden;}
+.db-mod-fill{height:100%;border-radius:99px;transition:width .5s ease;}
+.db-mod-pct{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:5px;}
+.db-mod-status{
+  position:absolute;top:10px;right:10px;
+  font-size:10px;font-family:var(--mono);
+  padding:2px 7px;border-radius:99px;
+}
+.db-mod-status.em-curso{background:rgba(79,158,255,.15);color:var(--blue);}
+.db-mod-status.concluido{background:rgba(34,211,160,.15);color:var(--green);}
+.db-mod-status.bloqueado{background:var(--surf2);color:var(--muted);}
+
+.db-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.db-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r12);padding:20px;}
+.db-card-title{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;font-family:var(--mono);}
+.act-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:12px;color:var(--sub);}
+.act-item:last-child{border-bottom:none;}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.act-time{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto;}
+.skill-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bdr);}
+.skill-row:last-child{border-bottom:none;}
+.skill-name{font-size:12px;flex:1;}
+.skill-track{flex:2;height:5px;background:var(--bdr);border-radius:99px;overflow:hidden;}
+.skill-fill{height:100%;border-radius:99px;}
+.skill-pct{font-family:var(--mono);font-size:10px;color:var(--muted);min-width:28px;text-align:right;}
+.db-resume-btn{
+  margin-top:16px;width:100%;
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  padding:11px;border-radius:var(--r8);
+  background:linear-gradient(90deg,var(--blue),var(--purple));
+  color:#fff;border:none;cursor:pointer;transition:opacity .2s;
+}
+.db-resume-btn:hover{opacity:.88;}
+
+/* ══ LESSON ══ */
+.l-eyebrow{font-family:var(--mono);font-size:10px;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+.l-title{font-size:28px;font-weight:700;letter-spacing:-.6px;line-height:1.15;margin-bottom:8px;}
+.l-desc{color:var(--sub);font-size:14px;line-height:1.65;margin-bottom:28px;max-width:600px;}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r12);padding:22px;margin-bottom:18px;}
+.card-hd{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;display:flex;align-items:center;gap:7px;}
+h3{font-size:15px;font-weight:600;margin:18px 0 8px;}
+p{font-size:13px;line-height:1.7;color:#b0b8d4;margin-bottom:10px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+.ccard{background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:14px;}
+.ccard-icon{font-size:20px;margin-bottom:7px;}
+.ccard-title{font-size:12px;font-weight:600;margin-bottom:3px;}
+.ccard-desc{font-size:11px;color:var(--sub);line-height:1.5;}
+.slist{list-style:none;}
+.slist li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--bdr);font-size:12px;line-height:1.6;color:#b0b8d4;}
+.slist li:last-child{border-bottom:none;}
+.snum{min-width:24px;height:24px;background:var(--surf2);border:1px solid var(--bdr);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--blue);margin-top:1px;flex-shrink:0;}
+.callout{border-radius:9px;padding:13px 16px;font-size:12px;line-height:1.6;margin:12px 0;}
+.callout-b{background:rgba(79,158,255,.07);border:1px solid rgba(79,158,255,.22);color:#9abfe8;}
+.callout-g{background:rgba(34,211,160,.07);border:1px solid rgba(34,211,160,.22);color:#8dd9c0;}
+.callout-y{background:rgba(245,197,24,.07);border:1px solid rgba(245,197,24,.22);color:#e0cc80;}
+.callout-p{background:rgba(124,92,252,.07);border:1px solid rgba(124,92,252,.22);color:#b0a0f0;}
+.callout strong{color:var(--text);}
+code{font-family:var(--mono);font-size:11px;background:var(--surf2);padding:2px 6px;border-radius:4px;color:var(--blue);}
+.codeblock{
+  background:#080a0f;border:1px solid var(--bdr);border-radius:10px;
+  padding:16px 18px;font-family:var(--mono);font-size:11px;line-height:1.75;
+  color:#90aac8;overflow-x:auto;margin:12px 0;
+}
+.codeblock .cm{color:#3d4d66;} .codeblock .ck{color:var(--yellow);} .codeblock .cv{color:var(--green);} .codeblock .cs{color:#fc8181;} .codeblock .ca{color:var(--blue);}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.tag{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:5px;background:var(--surf2);border:1px solid var(--bdr);color:var(--sub);}
+.tag-b{border-color:rgba(79,158,255,.3);color:var(--blue);background:rgba(79,158,255,.07);}
+.tag-g{border-color:rgba(34,211,160,.3);color:var(--green);background:rgba(34,211,160,.07);}
+.tbl{width:100%;border-collapse:collapse;font-size:11px;}
+.tbl th{text-align:left;padding:7px 12px;color:var(--blue);font-family:var(--mono);font-weight:500;border-bottom:1px solid var(--bdr);}
+.tbl td{padding:7px 12px;border-bottom:1px solid var(--bdr);color:#b0b8d4;}
+.tbl tr:last-child td{border-bottom:none;}
+
+/* flow */
+.flow{display:flex;align-items:center;gap:0;overflow-x:auto;padding:16px 0;}
+.fnode{
+  display:flex;flex-direction:column;align-items:center;
+  background:var(--surf2);border:1.5px solid var(--bdr);border-radius:9px;
+  padding:10px 13px;min-width:78px;text-align:center;font-size:10px;
+  transition:border-color .15s;
+}
+.fnode:hover{border-color:var(--blue);}
+.fnode-ic{font-size:18px;margin-bottom:5px;}
+.fnode-lbl{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:3px;}
+.farr{font-size:16px;color:var(--bdr2);padding:0 3px;flex-shrink:0;}
+.fnode.ft{border-color:rgba(79,158,255,.35);}
+.fnode.fa{border-color:rgba(124,92,252,.35);}
+.fnode.fi{border-color:rgba(34,211,160,.35);}
+
+/* checklist */
+.cl{list-style:none;}
+.cl li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--bdr);font-size:12px;color:#b0b8d4;cursor:pointer;transition:color .15s;}
+.cl li:last-child{border-bottom:none;}
+.cl li.ck{color:var(--muted);text-decoration:line-through;}
+.cb{width:17px;height:17px;min-width:17px;border:1.5px solid var(--bdr);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .18s;margin-top:1px;}
+.cl li.ck .cb{background:var(--green);border-color:var(--green);color:#0b0d12;}
+
+/* quiz */
+.qwrap{margin-bottom:8px;}
+.qq{font-size:13px;font-weight:500;line-height:1.55;margin-bottom:12px;color:var(--text);}
+.qopts{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.qopts li{padding:10px 14px;border:1.5px solid var(--bdr);border-radius:7px;font-size:12px;cursor:pointer;transition:all .15s;color:#b0b8d4;}
+.qopts li:hover{border-color:var(--blue);color:var(--text);background:rgba(79,158,255,.04);}
+.qopts li.qok{border-color:var(--green);background:rgba(34,211,160,.07);color:var(--green);}
+.qopts li.qerr{border-color:var(--red);background:rgba(255,95,109,.07);color:var(--red);}
+.qopts li.qdis{cursor:default;pointer-events:none;}
+.qfb{margin-top:10px;padding:10px 14px;border-radius:7px;font-size:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.ok{background:rgba(34,211,160,.09);color:var(--green);border:1px solid rgba(34,211,160,.25);}
+.qfb.err{background:rgba(255,95,109,.09);color:var(--red);border:1px solid rgba(255,95,109,.25);}
+.qdivider{border:none;border-top:1px solid var(--bdr);margin:20px 0;}
+
+/* stars */
+.se{display:flex;flex-direction:column;gap:12px;}
+.se-item{display:flex;flex-direction:column;gap:6px;}
+.se-lbl{font-size:12px;color:var(--text);}
+.stars{display:flex;gap:5px;}
+.star{font-size:18px;cursor:pointer;filter:grayscale(1) opacity(.35);transition:filter .1s,transform .1s;}
+.star:hover,.star.on{filter:grayscale(0) opacity(1);transform:scale(1.12);}
+
+/* lesson nav */
+.lnav{display:flex;justify-content:space-between;align-items:center;margin-top:36px;padding-top:20px;border-top:1px solid var(--bdr);}
+.btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:9px 18px;border-radius:7px;cursor:pointer;border:none;transition:all .18s;}
+.btn-ghost{background:transparent;border:1px solid var(--bdr);color:var(--sub);}
+.btn-ghost:hover{border-color:var(--text);color:var(--text);}
+.btn-next{background:var(--blue);color:#0b0d12;font-weight:600;}
+.btn-next:hover{background:#6ab0ff;}
+.btn-done{background:var(--green);color:#0b0d12;font-weight:600;}
+.btn-done:hover{background:#34e8b4;}
+
+/* cert */
+#cert-view{display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px;min-height:calc(100vh - 60px);}
+#cert-view.active{display:flex;}
+.cert-card{background:var(--surf);border:1px solid var(--bdr);border-radius:20px;padding:48px 56px;max-width:600px;width:100%;text-align:center;}
+.cert-seal{font-size:52px;margin-bottom:16px;}
+.cert-badge{font-family:var(--mono);font-size:10px;color:var(--blue);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
+.cert-name{font-size:26px;font-weight:700;margin:8px 0 20px;}
+.cert-stats{display:flex;gap:28px;justify-content:center;margin:20px 0;}
+.cert-st{display:flex;flex-direction:column;align-items:center;}
+.cert-st .n{font-size:24px;font-weight:700;color:var(--blue);}
+.cert-st .l{font-size:10px;color:var(--muted);font-family:var(--mono);}
+.cert-hr{border:none;border-top:1px solid var(--bdr);margin:20px 0;}
+
+/* prompt builder */
+.pb-wrap{margin-top:4px;}
+.pb-field{width:100%;background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;padding:10px 12px;font-family:var(--mono);font-size:11px;color:var(--text);margin-bottom:8px;resize:vertical;min-height:60px;}
+.pb-field:focus{outline:none;border-color:var(--blue);}
+.pb-out{background:#080a0f;border:1px solid var(--bdr);border-radius:9px;padding:14px 16px;font-family:var(--mono);font-size:11px;color:var(--green);line-height:1.7;min-height:80px;white-space:pre-wrap;word-break:break-word;}
+.pb-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:8px 16px;background:var(--purple);color:#fff;border:none;border-radius:7px;cursor:pointer;margin-top:8px;transition:opacity .18s;}
+.pb-btn:hover{opacity:.8;}
+
+/* whatsapp preview */
+.wa-preview{background:#0a1219;border:1px solid var(--bdr);border-radius:12px;padding:20px;max-width:360px;}
+.wa-hd{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--bdr);}
+.wa-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:16px;}
+.wa-name{font-size:13px;font-weight:600;}
+.wa-status{font-size:10px;color:var(--green);font-family:var(--mono);}
+.wa-msgs{display:flex;flex-direction:column;gap:8px;}
+.wa-msg{max-width:80%;padding:8px 12px;border-radius:10px;font-size:11px;line-height:1.5;}
+.wa-msg.recv{background:var(--surf2);border-radius:0 10px 10px 10px;color:#b0b8d4;}
+.wa-msg.sent{background:rgba(79,158,255,.15);border-radius:10px 0 10px 10px;color:var(--blue);align-self:flex-end;}
+.wa-msg.ai{background:rgba(34,211,160,.1);border-radius:0 10px 10px 10px;color:var(--green);}
+.wa-time{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:3px;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="hdr">
+  <div class="hlogo" onclick="showDash()">
+    <div class="hlogo-icon">🤖</div>
+    <div>
+      <div class="hlogo-name">IA Aplicada</div>
+      <div class="hlogo-tag">Automação & Agentes · 8 Módulos · 60h</div>
+    </div>
+  </div>
+  <div class="hbar">
+    <div class="hprog">
+      <div class="hprog-lbl">Progresso — <span id="hpct">0%</span></div>
+      <div class="hprog-track"><div class="hprog-fill" id="hbar" style="width:0%"></div></div>
+    </div>
+    <button class="hbtn hbtn-dash active" id="btn-dash" onclick="showDash()">📊 Dashboard</button>
+    <button class="hbtn hbtn-ghost" id="btn-cert" onclick="showCert()">🎓 Certificado</button>
+  </div>
+</header>
+
+<div id="wrap">
+
+<!-- SIDEBAR -->
+<nav id="nav">
+
+  <div class="nmod" id="nmod1">
+    <div class="nmod-hd" onclick="toggleMod(1)">
+      <div class="nmod-hd-l"><span class="nmod-num">M1</span><span class="nmod-name">Ecossistema IA</span></div>
+      <span class="nmod-badge" id="mb1">0/4</span>
+    </div>
+    <div class="nmod-lessons" id="nl1">
+      <div class="nitem" id="ni-m1l1" onclick="goTo('m1l1')"><span class="nitem-chk" id="nc-m1l1">○</span> O que é IA Generativa</div>
+      <div class="nitem" id="ni-m1l2" onclick="goTo('m1l2')"><span class="nitem-chk" id="nc-m1l2">○</span> LLMs e Modelos</div>
+      <div class="nitem" id="ni-m1l3" onclick="goTo('m1l3')"><span class="nitem-chk" id="nc-m1l3">○</span> Ecossistema de Ferramentas</div>
+      <div class="nitem" id="ni-m1l4" onclick="goTo('m1l4')"><span class="nitem-chk" id="nc-m1l4">○</span> Quiz + Autoavaliação</div>
+    </div>
+  </div>
+
+  <div class="nmod" id="nmod2">
+    <div class="nmod-hd" onclick="toggleMod(2)">
+      <div class="nmod-hd-l"><span class="nmod-num">M2</span><span class="nmod-name">APIs na Prática</span></div>
+      <span class="nmod-badge" id="mb2">0/4</span>
+    </div>
+    <div class="nmod-lessons" id="nl2">
+      <div class="nitem" id="ni-m2l1" onclick="goTo('m2l1')"><span class="nitem-chk" id="nc-m2l1">○</span> O que é uma API</div>
+      <div class="nitem" id="ni-m2l2" onclick="goTo('m2l2')"><span class="nitem-chk" id="nc-m2l2">○</span> REST, JSON e HTTP</div>
+      <div class="nitem" id="ni-m2l3" onclick="goTo('m2l3')"><span class="nitem-chk" id="nc-m2l3">○</span> Postman na Prática</div>
+      <div class="nitem" id="ni-m2l4" onclick="goTo('m2l4')"><span class="nitem-chk" id="nc-m2l4">○</span> Quiz + Autoavaliação</div>
+    </div>
+  </div>
+
+  <div class="nmod" id="nmod3">
+    <div class="nmod-hd" onclick="toggleMod(3)">
+      <div class="nmod-hd-l"><span class="nmod-num">M3</span><span class="nmod-name">Automação n8n</span></div>
+      <span class="nmod-badge" id="mb3">0/5</span>
+    </div>
+    <div class="nmod-lessons" id="nl3">
+      <div class="nitem" id="ni-m3l1" onclick="goTo('m3l1')"><span class="nitem-chk" id="nc-m3l1">○</span> Introdução ao n8n</div>
+      <div class="nitem" id="ni-m3l2" onclick="goTo('m3l2')"><span class="nitem-chk" id="nc-m3l2">○</span> Nodes, Triggers e Fluxos</div>
+      <div class="nitem" id="ni-m3l3" onclick="goTo('m3l3')"><span class="nitem-chk" id="nc-m3l3">○</span> Primeiro Workflow Real</div>
+      <div class="nitem" id="ni-m3l4" onclick="goTo('m3l4')"><span class="nitem-chk" id="nc-m3l4">○</span> n8n + OpenAI + WhatsApp</div>
+      <div class="nitem" id="ni-m3l5" onclick="goTo('m3l5')"><span class="nitem-chk" id="nc-m3l5">○</span> Quiz + Autoavaliação</div>
+    </div>
+  </div>
+
+  <div class="nmod" id="nmod4">
+    <div class="nmod-hd" onclick="toggleMod(4)">
+      <div class="nmod-hd-l"><span class="nmod-num">M4</span><span class="nmod-name">OpenAI & Prompts</span></div>
+      <span class="nmod-badge" id="mb4">0/5</span>
+    </div>
+    <div class="nmod-lessons" id="nl4">
+      <div class="nitem" id="ni-m4l1" onclick="goTo('m4l1')"><span class="nitem-chk" id="nc-m4l1">○</span> API OpenAI a fundo</div>
+      <div class="nitem" id="ni-m4l2" onclick="goTo('m4l2')"><span class="nitem-chk" id="nc-m4l2">○</span> Engenharia de Prompt</div>
+      <div class="nitem" id="ni-m4l3" onclick="goTo('m4l3')"><span class="nitem-chk" id="nc-m4l3">○</span> Few-shot e Chain-of-Thought</div>
+      <div class="nitem" id="ni-m4l4" onclick="goTo('m4l4')"><span class="nitem-chk" id="nc-m4l4">○</span> Function Calling</div>
+      <div class="nitem" id="ni-m4l5" onclick="goTo('m4l5')"><span class="nitem-chk" id="nc-m4l5">○</span> Quiz + Autoavaliação</div>
+    </div>
+  </div>
+
+  <div class="nmod" id="nmod5">
+    <div class="nmod-hd" onclick="toggleMod(5)">
+      <div class="nmod-hd-l"><span class="nmod-num">M5</span><span class="nmod-name">WhatsApp</span></div>
+      <span class="nmod-badge" id="mb5">0/5</span>
+    </div>
+    <div class="nmod-lessons" id="nl5">
+      <div class="nitem" id="ni-m5l1" onclick="goTo('m5l1')"><span class="nitem-chk" id="nc-m5l1">○</span> WhatsApp Business API</div>
+      <div class="nitem" id="ni-m5l2" onclick="goTo('m5l2')"><span class="nitem-chk" id="nc-m5l2">○</span> Evolution API Setup</div>
+      <div class="nitem" id="ni-m5l3" onclick="goTo('m5l3')"><span class="nitem-chk" id="nc-m5l3">○</span> Templates e Mensagens</div>
+      <div class="nitem" id="ni-m5l4" onclick="goTo('m5l4')"><span class="nitem-chk" id="nc-m5l4">○</span> Bot Completo de Atendimento</div>
+      <div class="nitem" id="ni-m5l5" onclick="goTo('m5l5')"><span class="nitem-chk" id="nc-m5l5">○</span> Quiz + Autoavaliação</div>
+    </div>
+  </div>
+
+  <div class="nmod nmod-locked">
+    <div class="nmod-hd"><div class="nmod-hd-l"><span class="nmod-num">M6</span><span class="nmod-name">CRM & Integrações</span></div><span class="nmod-badge">Em breve</span></div>
+  </div>
+  <div class="nmod nmod-locked">
+    <div class="nmod-hd"><div class="nmod-hd-l"><span class="nmod-num">M7</span><span class="nmod-name">Agentes Autônomos</span></div><span class="nmod-badge">Em breve</span></div>
+  </div>
+  <div class="nmod nmod-locked">
+    <div class="nmod-hd"><div class="nmod-hd-l"><span class="nmod-num">M8</span><span class="nmod-name">Multiagentes</span></div><span class="nmod-badge">Em breve</span></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- ══════════════════════════════════════
+     DASHBOARD
+══════════════════════════════════════ -->
+<div class="view active" id="view-dash">
+  <div class="db-greeting">
+    <h1>Bem-vindo de volta, William 👋</h1>
+    <p>Você está construindo a Central Inteligente da Mobili. Continue de onde parou.</p>
+  </div>
+
+  <div class="db-stats">
+    <div class="db-stat">
+      <div class="db-stat-val c-blue" id="ds-pct">0%</div>
+      <div class="db-stat-lbl">Concluído</div>
+      <div class="db-stat-sub" id="ds-lc">0 de 23 lições</div>
+    </div>
+    <div class="db-stat">
+      <div class="db-stat-val c-green" id="ds-mods">0</div>
+      <div class="db-stat-lbl">Módulos Completos</div>
+      <div class="db-stat-sub">de 8 no total</div>
+    </div>
+    <div class="db-stat">
+      <div class="db-stat-val c-purple" id="ds-hrs">0h</div>
+      <div class="db-stat-lbl">Horas Estudadas</div>
+      <div class="db-stat-sub">meta: 60h</div>
+    </div>
+    <div class="db-stat">
+      <div class="db-stat-val c-yellow" id="ds-streak">0</div>
+      <div class="db-stat-lbl">Sequência (dias)</div>
+      <div class="db-stat-sub" id="ds-last">Nenhum acesso</div>
+    </div>
+  </div>
+
+  <div class="db-mods">
+    <div class="db-sec-title">Módulos Disponíveis</div>
+    <div class="db-mod-grid">
+      <div class="db-mod-card" id="dmc1" onclick="goTo('m1l1')">
+        <div class="db-mod-icon">🧠</div>
+        <div class="db-mod-num">Módulo 1</div>
+        <div class="db-mod-name">Ecossistema IA</div>
+        <div class="db-mod-track"><div class="db-mod-fill" id="dmf1" style="width:0%;background:var(--blue)"></div></div>
+        <div class="db-mod-pct" id="dmp1">0%</div>
+        <div class="db-mod-status" id="dms1">—</div>
+      </div>
+      <div class="db-mod-card" id="dmc2" onclick="goTo('m2l1')">
+        <div class="db-mod-icon">🔌</div>
+        <div class="db-mod-num">Módulo 2</div>
+        <div class="db-mod-name">APIs na Prática</div>
+        <div class="db-mod-track"><div class="db-mod-fill" id="dmf2" style="width:0%;background:var(--purple)"></div></div>
+        <div class="db-mod-pct" id="dmp2">0%</div>
+        <div class="db-mod-status" id="dms2">—</div>
+      </div>
+      <div class="db-mod-card" id="dmc3" onclick="goTo('m3l1')">
+        <div class="db-mod-icon">⚙️</div>
+        <div class="db-mod-num">Módulo 3</div>
+        <div class="db-mod-name">Automação n8n</div>
+        <div class="db-mod-track"><div class="db-mod-fill" id="dmf3" style="width:0%;background:var(--orange)"></div></div>
+        <div class="db-mod-pct" id="dmp3">0%</div>
+        <div class="db-mod-status" id="dms3">—</div>
+      </div>
+      <div class="db-mod-card" id="dmc4" onclick="goTo('m4l1')">
+        <div class="db-mod-icon">✍️</div>
+        <div class="db-mod-num">Módulo 4</div>
+        <div class="db-mod-name">OpenAI & Prompts</div>
+        <div class="db-mod-track"><div class="db-mod-fill" id="dmf4" style="width:0%;background:var(--green)"></div></div>
+        <div class="db-mod-pct" id="dmp4">0%</div>
+        <div class="db-mod-status" id="dms4">—</div>
+      </div>
+      <div class="db-mod-card" id="dmc5" onclick="goTo('m5l1')">
+        <div class="db-mod-icon">💬</div>
+        <div class="db-mod-num">Módulo 5</div>
+        <div class="db-mod-name">WhatsApp</div>
+        <div class="db-mod-track"><div class="db-mod-fill" id="dmf5" style="width:0%;background:var(--cyan)"></div></div>
+        <div class="db-mod-pct" id="dmp5">0%</div>
+        <div class="db-mod-status" id="dms5">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="db-bottom">
+    <div class="db-card">
+      <div class="db-card-title">Atividade Recente</div>
+      <div id="act-list">
+        <div class="act-item"><span class="act-dot" style="background:var(--muted)"></span><span style="color:var(--muted)">Nenhuma atividade ainda</span></div>
+      </div>
+      <button class="db-resume-btn" id="resume-btn" onclick="resumeCourse()">▶ Continuar de onde parei</button>
+    </div>
+    <div class="db-card">
+      <div class="db-card-title">Habilidades em Desenvolvimento</div>
+      <div class="skill-row"><span class="skill-name">IA Generativa</span><div class="skill-track"><div class="skill-fill" id="sk1" style="width:0%;background:var(--blue)"></div></div><span class="skill-pct" id="skp1">0%</span></div>
+      <div class="skill-row"><span class="skill-name">APIs & JSON</span><div class="skill-track"><div class="skill-fill" id="sk2" style="width:0%;background:var(--purple)"></div></div><span class="skill-pct" id="skp2">0%</span></div>
+      <div class="skill-row"><span class="skill-name">Automação n8n</span><div class="skill-track"><div class="skill-fill" id="sk3" style="width:0%;background:var(--orange)"></div></div><span class="skill-pct" id="skp3">0%</span></div>
+      <div class="skill-row"><span class="skill-name">Engenharia de Prompt</span><div class="skill-track"><div class="skill-fill" id="sk4" style="width:0%;background:var(--green)"></div></div><span class="skill-pct" id="skp4">0%</span></div>
+      <div class="skill-row"><span class="skill-name">WhatsApp Bots</span><div class="skill-track"><div class="skill-fill" id="sk5" style="width:0%;background:var(--cyan)"></div></div><span class="skill-pct" id="skp5">0%</span></div>
+      <div style="margin-top:14px;padding:12px;background:var(--surf2);border-radius:8px;font-size:11px;color:var(--sub);line-height:1.5;">
+        <strong style="color:var(--text)">🎯 Próximo marco:</strong><br>
+        <span id="next-milestone">Complete o Módulo 1 para desbloquear o diagrama da Central Inteligente.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     MÓDULO 1 — LIÇÃO 1
+══════════════════════════════════════ -->
+<div class="view" id="view-m1l1">
+  <div class="l-eyebrow">Módulo 1 · Lição 1 de 4</div>
+  <div class="l-title">O que é IA Generativa</div>
+  <div class="l-desc">Entenda o que faz a IA generativa ser diferente de qualquer software anterior — e por que isso muda radicalmente como automatizamos processos.</div>
+  <div class="card">
+    <div class="card-hd">📖 Conceito Central</div>
+    <p>IA Generativa é uma categoria de Inteligência Artificial capaz de <strong>criar novos conteúdos</strong> — textos, imagens, código, áudio — a partir de padrões aprendidos em enormes volumes de dados. Diferente de sistemas baseados em regras fixas, ela <em>raciocina por probabilidade</em> e produz respostas contextuais e flexíveis.</p>
+    <p>Para negócios, isso significa automatizar tarefas que antes exigiam julgamento humano: redigir e-mails, interpretar reclamações, categorizar dados, gerar relatórios, responder clientes — tudo sem programar regras explícitas.</p>
+    <div class="callout callout-b"><strong>Diferença crucial:</strong> um sistema tradicional segue regras que você escreve. A IA Generativa aprende padrões dos dados e generaliza para situações novas — incluindo as que você não previu.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🧩 Os 4 Tipos de IA</div>
+    <div class="grid2">
+      <div class="ccard"><div class="ccard-icon">🔮</div><div class="ccard-title">IA Generativa</div><div class="ccard-desc">Cria conteúdo novo. ChatGPT, Claude, Gemini, DALL-E. Base dos agentes do projeto.</div></div>
+      <div class="ccard"><div class="ccard-icon">🔍</div><div class="ccard-title">IA Discriminativa</div><div class="ccard-desc">Classifica e detecta padrões em dados existentes. Detecção de fraude, triagem de reclamações.</div></div>
+      <div class="ccard"><div class="ccard-icon">🎮</div><div class="ccard-title">IA por Reforço</div><div class="ccard-desc">Aprende por tentativa e erro com recompensas. Base dos agentes autônomos avançados.</div></div>
+      <div class="ccard"><div class="ccard-icon">📊</div><div class="ccard-title">IA Preditiva</div><div class="ccard-desc">Prevê resultados futuros com base em histórico. Churn, inadimplência, demanda.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🏢 Aplicações na Proteção Veicular</div>
+    <ul class="slist">
+      <li><div class="snum">01</div><div><strong>Atendimento automatizado:</strong> bot que responde dúvidas sobre cobertura, aciona sinistros e encaminha ao regulador — sem fila humana.</div></li>
+      <li><div class="snum">02</div><div><strong>Triagem de Ouvidoria:</strong> IA classifica reclamações por urgência, sentimento e categoria antes de chegarem ao analista.</div></li>
+      <li><div class="snum">03</div><div><strong>Geração de documentos:</strong> contratos, comunicados e relatórios gerados a partir de dados do CRM, sem digitação manual.</div></li>
+      <li><div class="snum">04</div><div><strong>Análise de churn:</strong> identifica associados com risco de cancelamento e dispara régua de retenção personalizada.</div></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m1l1">
+      <li onclick="chk(this,'m1l1',0)"><div class="cb">✓</div>Consigo explicar IA Generativa com minhas próprias palavras</li>
+      <li onclick="chk(this,'m1l1',1)"><div class="cb">✓</div>Conheço os 4 tipos de IA e quando aplicar cada um</li>
+      <li onclick="chk(this,'m1l1',2)"><div class="cb">✓</div>Identifiquei ao menos 2 casos de uso para minha empresa</li>
+    </ul>
+  </div>
+  <div class="lnav"><div></div><button class="btn btn-done" onclick="done('m1l1','m1l2')">Concluir e Avançar →</button></div>
+</div>
+
+<!-- M1L2 -->
+<div class="view" id="view-m1l2">
+  <div class="l-eyebrow">Módulo 1 · Lição 2 de 4</div>
+  <div class="l-title">LLMs e Modelos de Linguagem</div>
+  <div class="l-desc">Como os Grandes Modelos de Linguagem funcionam — o suficiente para usá-los bem e integrá-los em automações empresariais.</div>
+  <div class="card">
+    <div class="card-hd">📖 O que é um LLM</div>
+    <p>LLM (Large Language Model) é um modelo treinado com bilhões de textos para <strong>prever qual token vem a seguir</strong>. Dessa capacidade emergem raciocínio, sumarização, tradução, geração de código e muito mais.</p>
+    <p>Quando você envia uma mensagem, o modelo processa seu <em>prompt</em> e gera tokens um a um — cada um influenciado pelos anteriores. A "inteligência" surge estatisticamente, não de regras.</p>
+    <div class="callout callout-b"><strong>Analogia:</strong> um LLM é como um estagiário que leu a internet inteira. Ele não "sabe" nada de forma definitiva, mas tem padrões sofisticados para gerar respostas úteis. Seu prompt é o briefing que determina a qualidade do resultado.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🔑 5 Conceitos Essenciais para Integração</div>
+    <ul class="slist">
+      <li><div class="snum">Token</div><div><strong>Unidade básica de processamento.</strong> "automação" ≈ 3 tokens. Modelos têm limite de tokens por requisição (context window). Impacta custo e capacidade.</div></li>
+      <li><div class="snum">Temp.</div><div><strong>Temperatura controla criatividade.</strong> 0 = determinístico; 1 = criativo. Para automações empresariais use 0–0.3. Para geração criativa, 0.7–1.</div></li>
+      <li><div class="snum">Sys</div><div><strong>System Prompt</strong> é a instrução permanente que define o papel e comportamento do modelo. Equivale ao manual de atendimento do seu agente.</div></li>
+      <li><div class="snum">Ctx</div><div><strong>Context Window</strong> é a memória ativa de uma conversa. GPT-4o: 128k tokens; Claude: até 200k. Quanto maior, mais histórico o agente lembra.</div></li>
+      <li><div class="snum">Emb</div><div><strong>Embedding</strong> é a representação numérica de texto. Permite busca semântica — encontrar documentos similares mesmo com palavras diferentes.</div></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-hd">📊 Comparativo de Modelos</div>
+    <table class="tbl">
+      <thead><tr><th>Modelo</th><th>Empresa</th><th>Ponto Forte</th><th>Uso Ideal</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--green);font-family:var(--mono)">GPT-4o</td><td>OpenAI</td><td>Multimodal, velocidade, ecossistema</td><td>Agentes, código, análise</td></tr>
+        <tr><td style="color:var(--blue);font-family:var(--mono)">Claude 3.5</td><td>Anthropic</td><td>Raciocínio, textos longos, segurança</td><td>Ouvidoria, documentos legais</td></tr>
+        <tr><td style="color:var(--yellow);font-family:var(--mono)">Gemini 1.5</td><td>Google</td><td>Context window gigante, Google Apps</td><td>Processar docs, integrar G-Suite</td></tr>
+        <tr><td style="color:var(--muted);font-family:var(--mono)">Llama 3</td><td>Meta</td><td>Open-source, roda local, gratuito</td><td>Dados sensíveis, sem custo/token</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m1l2">
+      <li onclick="chk(this,'m1l2',0)"><div class="cb">✓</div>Entendo o que é um token e como impacta custo e limite</li>
+      <li onclick="chk(this,'m1l2',1)"><div class="cb">✓</div>Sei configurar temperatura de acordo com o caso de uso</li>
+      <li onclick="chk(this,'m1l2',2)"><div class="cb">✓</div>Sei qual modelo usar para Ouvidoria vs. automação de atendimento</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m1l1')">← Anterior</button><button class="btn btn-done" onclick="done('m1l2','m1l3')">Concluir e Avançar →</button></div>
+</div>
+
+<!-- M1L3 -->
+<div class="view" id="view-m1l3">
+  <div class="l-eyebrow">Módulo 1 · Lição 3 de 4</div>
+  <div class="l-title">Ecossistema de Ferramentas</div>
+  <div class="l-desc">O mapa completo das ferramentas que compõem uma solução de automação com IA — e como elas se conectam na Central Inteligente.</div>
+  <div class="card">
+    <div class="card-hd">🗺️ As 6 Camadas do Ecossistema</div>
+    <div class="grid2">
+      <div class="ccard"><div class="ccard-icon">🧠</div><div class="ccard-title">Inteligência (LLMs)</div><div class="ccard-desc">OpenAI, Claude, Gemini. O "cérebro" que raciocina e gera respostas.</div></div>
+      <div class="ccard"><div class="ccard-icon">⚙️</div><div class="ccard-title">Orquestração</div><div class="ccard-desc">n8n, Make, Zapier. Conecta ferramentas e gerencia fluxos automáticos.</div></div>
+      <div class="ccard"><div class="ccard-icon">💬</div><div class="ccard-title">Comunicação</div><div class="ccard-desc">WhatsApp API, E-mail, Telegram. Canais de interação com o usuário.</div></div>
+      <div class="ccard"><div class="ccard-icon">📋</div><div class="ccard-title">Dados & CRM</div><div class="ccard-desc">HubSpot, Sheets, Supabase. Onde ficam os dados do associado.</div></div>
+      <div class="ccard"><div class="ccard-icon">🔌</div><div class="ccard-title">APIs</div><div class="ccard-desc">Pontes entre sistemas. JSON + HTTP é a linguagem universal.</div></div>
+      <div class="ccard"><div class="ccard-icon">🤖</div><div class="ccard-title">Agentes & Memória</div><div class="ccard-desc">LangChain, CrewAI. Frameworks para agentes com ferramentas e memória.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🎯 Arquitetura da Central Inteligente</div>
+    <div class="flow">
+      <div class="fnode ft"><div class="fnode-ic">💬</div>WhatsApp<div class="fnode-lbl">ENTRADA</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">⚙️</div>n8n<div class="fnode-lbl">ORQUESTRA</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fi"><div class="fnode-ic">🧠</div>OpenAI<div class="fnode-lbl">CLASSIFICA</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">🔀</div>Roteador<div class="fnode-lbl">DIRECIONA</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fi"><div class="fnode-ic">🤖</div>Agente<div class="fnode-lbl">RESPONDE</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">📋</div>CRM<div class="fnode-lbl">REGISTRA</div></div>
+    </div>
+    <div class="callout callout-g">Este é o fluxo que você vai construir ao longo do curso. Cada módulo adiciona uma camada a esta arquitetura.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m1l3">
+      <li onclick="chk(this,'m1l3',0)"><div class="cb">✓</div>Conheço as 6 camadas do ecossistema e o papel de cada uma</li>
+      <li onclick="chk(this,'m1l3',1)"><div class="cb">✓</div>Entendo o fluxo completo da Central Inteligente</li>
+      <li onclick="chk(this,'m1l3',2)"><div class="cb">✓</div>Identifiquei ferramentas que já usamos vs. as que precisamos implantar</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m1l2')">← Anterior</button><button class="btn btn-done" onclick="done('m1l3','m1l4')">Concluir e Avançar →</button></div>
+</div>
+
+<!-- M1L4 QUIZ -->
+<div class="view" id="view-m1l4">
+  <div class="l-eyebrow">Módulo 1 · Avaliação</div>
+  <div class="l-title">Quiz + Autoavaliação</div>
+  <div class="l-desc">Valide o que aprendeu antes de avançar para APIs.</div>
+  <div class="card">
+    <div class="card-hd">❓ Quiz — Módulo 1</div>
+    <div class="qwrap">
+      <div class="qq">1. Qual tipo de IA é mais adequado para classificar automaticamente reclamações de associados por urgência?</div>
+      <ul class="qopts" id="q-m1q1"><li onclick="ans(this,'m1q1','a')">IA Generativa</li><li onclick="ans(this,'m1q1','b')">IA Discriminativa ✓</li><li onclick="ans(this,'m1q1','c')">IA por Reforço</li><li onclick="ans(this,'m1q1','d')">IA Preditiva</li></ul>
+      <div class="qfb" id="fb-m1q1"></div>
+    </div>
+    <hr class="qdivider">
+    <div class="qwrap">
+      <div class="qq">2. Um agente de atendimento que precisa responder de forma precisa e consistente deve usar temperatura:</div>
+      <ul class="qopts" id="q-m1q2"><li onclick="ans(this,'m1q2','a')">0 (zero) ✓</li><li onclick="ans(this,'m1q2','b')">0,5</li><li onclick="ans(this,'m1q2','c')">1</li><li onclick="ans(this,'m1q2','d')">2</li></ul>
+      <div class="qfb" id="fb-m1q2"></div>
+    </div>
+    <hr class="qdivider">
+    <div class="qwrap">
+      <div class="qq">3. No ecossistema da Central Inteligente, qual ferramenta atua como orquestradora?</div>
+      <ul class="qopts" id="q-m1q3"><li onclick="ans(this,'m1q3','a')">OpenAI</li><li onclick="ans(this,'m1q3','b')">WhatsApp Business API</li><li onclick="ans(this,'m1q3','c')">n8n ✓</li><li onclick="ans(this,'m1q3','d')">HubSpot</li></ul>
+      <div class="qfb" id="fb-m1q3"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">⭐ Autoavaliação</div>
+    <div class="se">
+      <div class="se-item"><div class="se-lbl">Domínio dos conceitos de IA Generativa e LLMs</div><div class="stars" data-id="m1-1" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+      <div class="se-item"><div class="se-lbl">Capacidade de mapear o ecossistema de ferramentas</div><div class="stars" data-id="m1-2" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+    </div>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m1l3')">← Anterior</button><button class="btn btn-done" onclick="done('m1l4','m2l1')">Concluir Módulo 1 →</button></div>
+</div>
+
+<!-- ══ MÓDULO 2 ══ -->
+<div class="view" id="view-m2l1">
+  <div class="l-eyebrow">Módulo 2 · Lição 1 de 4</div>
+  <div class="l-title">O que é uma API</div>
+  <div class="l-desc">APIs são a cola de toda automação moderna. Entendê-las é o pré-requisito para conectar qualquer sistema.</div>
+  <div class="card">
+    <div class="card-hd">📖 Definição Prática</div>
+    <p>API (Application Programming Interface) é um <strong>contrato de comunicação entre sistemas</strong>. Ela define o que você pode pedir, em qual formato, e o que receberá de volta.</p>
+    <div class="callout callout-g"><strong>Analogia do garçom:</strong> você não vai à cozinha do restaurante. Você faz o pedido ao garçom (API), que entrega o resultado. O garçom sabe como a cozinha funciona — você só precisa conhecer o cardápio (documentação).</div>
+    <p>Na prática da Mobili: quando um associado aciona o WhatsApp, o bot usa a API do WhatsApp para receber a mensagem, a API da OpenAI para gerar a resposta e a API do CRM para registrar o atendimento — tudo em segundos.</p>
+  </div>
+  <div class="card">
+    <div class="card-hd">🔑 Anatomia de uma Chamada</div>
+    <ul class="slist">
+      <li><div class="snum">URL</div><div><strong>Endpoint:</strong> o endereço do recurso. Ex: <code>https://api.openai.com/v1/chat/completions</code></div></li>
+      <li><div class="snum">HTTP</div><div><strong>Método:</strong> a ação. <code>GET</code> (buscar) · <code>POST</code> (criar/enviar) · <code>PUT</code> (atualizar) · <code>DELETE</code> (apagar)</div></li>
+      <li><div class="snum">Auth</div><div><strong>Headers:</strong> metadados. O mais importante: <code>Authorization: Bearer SEU_API_KEY</code> — sua chave de acesso, nunca compartilhe.</div></li>
+      <li><div class="snum">Body</div><div><strong>Payload:</strong> os dados enviados em JSON. Usado em POST e PUT.</div></li>
+      <li><div class="snum">Resp</div><div><strong>Status Code:</strong> 200 OK · 201 Criado · 400 Requisição inválida · 401 Sem autenticação · 404 Não encontrado · 500 Erro no servidor</div></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m2l1">
+      <li onclick="chk(this,'m2l1',0)"><div class="cb">✓</div>Consigo explicar API com a analogia do garçom</li>
+      <li onclick="chk(this,'m2l1',1)"><div class="cb">✓</div>Conheço os 4 métodos HTTP e quando usar cada um</li>
+      <li onclick="chk(this,'m2l1',2)"><div class="cb">✓</div>Entendo o que é um API Key e por que ele deve ser protegido</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m1l4')">← Anterior</button><button class="btn btn-done" onclick="done('m2l1','m2l2')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m2l2">
+  <div class="l-eyebrow">Módulo 2 · Lição 2 de 4</div>
+  <div class="l-title">REST, JSON e HTTP</div>
+  <div class="l-desc">Os três pilares técnicos de qualquer integração moderna. Você não precisa ser dev para dominar isso.</div>
+  <div class="card">
+    <div class="card-hd">📦 JSON — A Linguagem dos Dados</div>
+    <p>JSON (JavaScript Object Notation) é o formato universal de troca de dados entre APIs. É legível por humanos e máquinas. Toda API relevante retorna JSON.</p>
+    <div class="codeblock">
+<span class="cm">// Exemplo: resposta de sinistro no CRM</span>
+{
+  <span class="ck">"id_sinistro"</span>: <span class="cs">"SIN-2024-00892"</span>,
+  <span class="ck">"associado"</span>: {
+    <span class="ck">"nome"</span>: <span class="cs">"Carlos Henrique"</span>,
+    <span class="ck">"plano"</span>: <span class="cs">"Premium"</span>,
+    <span class="ck">"ativo"</span>: <span class="cv">true</span>
+  },
+  <span class="ck">"status"</span>: <span class="cs">"em_analise"</span>,
+  <span class="ck">"valor_estimado"</span>: <span class="cv">8500.00</span>,
+  <span class="ck">"documentos"</span>: [<span class="cs">"boletim.pdf"</span>, <span class="cs">"fotos.zip"</span>]
+}</div>
+    <div class="tag-row"><span class="tag tag-b">{ } Objeto</span><span class="tag tag-b">[ ] Array</span><span class="tag tag-g">"string"</span><span class="tag tag-g">123 número</span><span class="tag tag-g">true/false</span><span class="tag">null vazio</span></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🌐 REST — Recursos + Verbos</div>
+    <table class="tbl">
+      <thead><tr><th>Método</th><th>Endpoint</th><th>O que faz</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--green);font-family:var(--mono)">GET</td><td><code>/associados/123</code></td><td>Busca dados do associado 123</td></tr>
+        <tr><td style="color:var(--yellow);font-family:var(--mono)">POST</td><td><code>/sinistros</code></td><td>Abre novo sinistro (body com os dados)</td></tr>
+        <tr><td style="color:var(--blue);font-family:var(--mono)">PUT</td><td><code>/sinistros/892</code></td><td>Atualiza o sinistro 892</td></tr>
+        <tr><td style="color:var(--red);font-family:var(--mono)">DELETE</td><td><code>/rascunhos/7</code></td><td>Remove rascunho 7</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m2l2">
+      <li onclick="chk(this,'m2l2',0)"><div class="cb">✓</div>Consigo ler e interpretar uma resposta JSON</li>
+      <li onclick="chk(this,'m2l2',1)"><div class="cb">✓</div>Entendo a estrutura REST de endpoint + método</li>
+      <li onclick="chk(this,'m2l2',2)"><div class="cb">✓</div>Sei a diferença prática entre GET e POST</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m2l1')">← Anterior</button><button class="btn btn-done" onclick="done('m2l2','m2l3')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m2l3">
+  <div class="l-eyebrow">Módulo 2 · Lição 3 de 4</div>
+  <div class="l-title">Postman na Prática</div>
+  <div class="l-desc">Postman é a bancada de testes. Antes de automatizar qualquer integração, você valida aqui.</div>
+  <div class="card">
+    <div class="card-hd">🔧 Por que usar Postman</div>
+    <p>Antes de conectar uma API ao n8n, você precisa entender como ela funciona: quais campos enviar, o que ela retorna, como autenticar. O Postman permite fazer isso visualmente, sem escrever código.</p>
+    <div class="callout callout-y"><strong>Regra de ouro:</strong> sempre teste no Postman antes de automatizar. Um erro de JSON ou autenticação no Postman leva 2 minutos para identificar. No meio de uma automação, leva horas.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🧪 Exercício: Primeira Chamada à OpenAI</div>
+    <ul class="slist">
+      <li><div class="snum">01</div><div>Abra o Postman → <strong>New → HTTP Request</strong></div></li>
+      <li><div class="snum">02</div><div>Método <strong>POST</strong> → URL: <code>https://api.openai.com/v1/chat/completions</code></div></li>
+      <li><div class="snum">03</div><div><strong>Headers:</strong> <code>Authorization: Bearer sk-...</code> e <code>Content-Type: application/json</code></div></li>
+      <li><div class="snum">04</div><div><strong>Body → raw → JSON</strong> → cole o payload abaixo → <strong>Send</strong></div></li>
+    </ul>
+    <div class="codeblock">{
+  <span class="ck">"model"</span>: <span class="cs">"gpt-4o-mini"</span>,
+  <span class="ck">"messages"</span>: [
+    {<span class="ck">"role"</span>: <span class="cs">"system"</span>, <span class="ck">"content"</span>: <span class="cs">"Você é assistente da Mobili Proteção Veicular. Seja objetivo e cordial."</span>},
+    {<span class="ck">"role"</span>: <span class="cs">"user"</span>, <span class="ck">"content"</span>: <span class="cs">"Meu veículo foi roubado. O que devo fazer?"</span>}
+  ],
+  <span class="ck">"temperature"</span>: <span class="cv">0.2</span>,
+  <span class="ck">"max_tokens"</span>: <span class="cv">300</span>
+}</div>
+    <div class="callout callout-g"><strong>Resultado esperado:</strong> JSON com o texto em <code>choices[0].message.content</code></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m2l3">
+      <li onclick="chk(this,'m2l3',0)"><div class="cb">✓</div>Fiz minha primeira chamada à API da OpenAI no Postman</li>
+      <li onclick="chk(this,'m2l3',1)"><div class="cb">✓</div>Encontrei o texto da resposta em choices[0].message.content</li>
+      <li onclick="chk(this,'m2l3',2)"><div class="cb">✓</div>Sei configurar headers de autenticação no Postman</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m2l2')">← Anterior</button><button class="btn btn-done" onclick="done('m2l3','m2l4')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m2l4">
+  <div class="l-eyebrow">Módulo 2 · Avaliação</div>
+  <div class="l-title">Quiz + Autoavaliação</div>
+  <div class="l-desc">Valide o domínio de APIs antes de partir para o n8n.</div>
+  <div class="card">
+    <div class="card-hd">❓ Quiz — Módulo 2</div>
+    <div class="qwrap">
+      <div class="qq">1. Você quer buscar dados de um associado pelo ID no CRM. Qual método HTTP?</div>
+      <ul class="qopts" id="q-m2q1"><li onclick="ans(this,'m2q1','a')">POST</li><li onclick="ans(this,'m2q1','b')">GET ✓</li><li onclick="ans(this,'m2q1','c')">PUT</li><li onclick="ans(this,'m2q1','d')">DELETE</li></ul>
+      <div class="qfb" id="fb-m2q1"></div>
+    </div>
+    <hr class="qdivider">
+    <div class="qwrap">
+      <div class="qq">2. Na resposta da API da OpenAI, onde fica o texto gerado pelo modelo?</div>
+      <ul class="qopts" id="q-m2q2"><li onclick="ans(this,'m2q2','a')">response.text</li><li onclick="ans(this,'m2q2','b')">data.output</li><li onclick="ans(this,'m2q2','c')">choices[0].message.content ✓</li><li onclick="ans(this,'m2q2','d')">result.answer</li></ul>
+      <div class="qfb" id="fb-m2q2"></div>
+    </div>
+    <hr class="qdivider">
+    <div class="qwrap">
+      <div class="qq">3. Status code 401 significa:</div>
+      <ul class="qopts" id="q-m2q3"><li onclick="ans(this,'m2q3','a')">Sucesso</li><li onclick="ans(this,'m2q3','b')">Não encontrado</li><li onclick="ans(this,'m2q3','c')">Erro no servidor</li><li onclick="ans(this,'m2q3','d')">Não autorizado — problema de autenticação ✓</li></ul>
+      <div class="qfb" id="fb-m2q3"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">⭐ Autoavaliação</div>
+    <div class="se">
+      <div class="se-item"><div class="se-lbl">Confiança para ler e escrever JSON</div><div class="stars" data-id="m2-1" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+      <div class="se-item"><div class="se-lbl">Capacidade de fazer chamadas de API no Postman</div><div class="stars" data-id="m2-2" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+    </div>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m2l3')">← Anterior</button><button class="btn btn-done" onclick="done('m2l4','m3l1')">Concluir Módulo 2 →</button></div>
+</div>
+<!-- ══ MÓDULO 3 ══ -->
+<div class="view" id="view-m3l1">
+  <div class="l-eyebrow">Módulo 3 · Lição 1 de 5</div>
+  <div class="l-title">Introdução ao n8n</div>
+  <div class="l-desc">O n8n é o coração da Central Inteligente. É aqui que os fluxos ganham vida, conectando cada peça do ecossistema sem precisar programar.</div>
+  <div class="card">
+    <div class="card-hd">📖 O que é o n8n</div>
+    <p>n8n é uma plataforma de automação de fluxos de trabalho <strong>open-source e visual</strong>. Você arrastra blocos (nodes), conecta com setas e define lógicas — sem código. Quando precisar de lógica avançada, suporta JavaScript nativo.</p>
+    <div class="callout callout-g"><strong>Por que n8n para a Mobili?</strong> Self-hosted = seus dados ficam no seu servidor. Para dados sensíveis de associados e sinistros, isso é crítico para conformidade e privacidade.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">⚙️ n8n vs. Zapier vs. Make</div>
+    <table class="tbl">
+      <thead><tr><th>Critério</th><th style="color:var(--green)">n8n</th><th>Zapier</th><th>Make</th></tr></thead>
+      <tbody>
+        <tr><td>Custo</td><td style="color:var(--green)">Grátis (self-hosted)</td><td>Pago por tarefa</td><td>Pago por operação</td></tr>
+        <tr><td>Dados sensíveis</td><td style="color:var(--green)">✅ Self-hosted</td><td style="color:var(--red)">❌ Cloud apenas</td><td style="color:var(--yellow)">⚠️ Limitado</td></tr>
+        <tr><td>Lógica condicional</td><td style="color:var(--green)">✅ Avançada</td><td style="color:var(--yellow)">⚠️ Básica</td><td style="color:var(--green)">✅ Boa</td></tr>
+        <tr><td>Suporte a IA/Agentes</td><td style="color:var(--green)">✅ Nativo</td><td style="color:var(--yellow)">⚠️ Limitado</td><td style="color:var(--yellow)">⚠️ Parcial</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-hd">🚀 3 Formas de Instalar</div>
+    <ul class="slist">
+      <li><div class="snum">☁️</div><div><strong>n8n Cloud (recomendado para início):</strong> acesse n8n.io, crie conta. Pronto em 2 minutos, sem configuração.</div></li>
+      <li><div class="snum">🐳</div><div><strong>Docker local:</strong> <code>docker run -it --rm -p 5678:5678 n8nio/n8n</code> → acesse <code>localhost:5678</code></div></li>
+      <li><div class="snum">🖥️</div><div><strong>VPS (produção):</strong> Digital Ocean, Hetzner ou Railway. ~R$50/mês para servidor dedicado com dados protegidos.</div></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m3l1">
+      <li onclick="chk(this,'m3l1',0)"><div class="cb">✓</div>Entendo por que n8n é a escolha certa para dados da Mobili</li>
+      <li onclick="chk(this,'m3l1',1)"><div class="cb">✓</div>Tenho o n8n instalado ou conta criada no Cloud</li>
+      <li onclick="chk(this,'m3l1',2)"><div class="cb">✓</div>Conheço as 3 diferenças principais entre n8n, Zapier e Make</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m2l4')">← Anterior</button><button class="btn btn-done" onclick="done('m3l1','m3l2')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m3l2">
+  <div class="l-eyebrow">Módulo 3 · Lição 2 de 5</div>
+  <div class="l-title">Nodes, Triggers e Fluxos</div>
+  <div class="l-desc">A gramática do n8n. Entenda os blocos de construção para montar qualquer automação.</div>
+  <div class="card">
+    <div class="card-hd">🧱 Os 4 Tipos de Nodes</div>
+    <div class="grid2">
+      <div class="ccard"><div class="ccard-icon">⚡</div><div class="ccard-title">Trigger Node</div><div class="ccard-desc">Inicia o fluxo. Webhook, schedule (cron), evento em app ou ativação manual.</div></div>
+      <div class="ccard"><div class="ccard-icon">⚙️</div><div class="ccard-title">Action Node</div><div class="ccard-desc">Executa uma ação: envia e-mail, cria registro no CRM, chama uma API externa.</div></div>
+      <div class="ccard"><div class="ccard-icon">🔀</div><div class="ccard-title">Logic Node</div><div class="ccard-desc">Controla o fluxo: IF (condição), Switch (múltiplos caminhos), Merge, Wait.</div></div>
+      <div class="ccard"><div class="ccard-icon">🔄</div><div class="ccard-title">Transform Node</div><div class="ccard-desc">Transforma dados: Set (define campos), Function (JS customizado), JSON parse.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">💡 Expressões n8n — Passando Dados</div>
+    <div class="codeblock">
+<span class="cm">// Campo do node imediatamente anterior</span>
+{{ <span class="ca">$json</span>.<span class="cv">nome_associado</span> }}
+
+<span class="cm">// Output de node específico pelo nome</span>
+{{ <span class="ca">$node</span>[<span class="cs">"CRM Request"</span>].<span class="cv">json</span>.<span class="cv">status</span> }}
+
+<span class="cm">// Operação condicional inline</span>
+{{ <span class="ca">$json</span>.<span class="cv">valor</span> > 5000 ? <span class="cs">"alto"</span> : <span class="cs">"normal"</span> }}
+
+<span class="cm">// Data atual formatada</span>
+{{ <span class="ca">$now</span>.format(<span class="cs">"DD/MM/YYYY"</span>) }}</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">📊 Exemplo de Fluxo: Relatório Diário de Sinistros</div>
+    <div class="flow">
+      <div class="fnode ft"><div class="fnode-ic">📅</div>Schedule<div class="fnode-lbl">TODO DIA 9H</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">🔌</div>HTTP CRM<div class="fnode-lbl">BUSCA DADOS</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">🔀</div>IF Node<div class="fnode-lbl">TEM SINISTRO?</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fi"><div class="fnode-ic">🧠</div>OpenAI<div class="fnode-lbl">GERA RESUMO</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">📧</div>Send Email<div class="fnode-lbl">ENVIA GESTOR</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m3l2">
+      <li onclick="chk(this,'m3l2',0)"><div class="cb">✓</div>Sei a diferença entre Trigger, Action, Logic e Transform nodes</li>
+      <li onclick="chk(this,'m3l2',1)"><div class="cb">✓</div>Consigo usar expressões {{ $json.campo }} para passar dados</li>
+      <li onclick="chk(this,'m3l2',2)"><div class="cb">✓</div>Entendo como o IF Node cria caminhos condicionais</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m3l1')">← Anterior</button><button class="btn btn-done" onclick="done('m3l2','m3l3')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m3l3">
+  <div class="l-eyebrow">Módulo 3 · Lição 3 de 5</div>
+  <div class="l-title">Primeiro Workflow Real</div>
+  <div class="l-desc">Mãos na massa. Construa um workflow funcional: formulário de acionamento de sinistro que classifica por IA e notifica o regulador automaticamente.</div>
+  <div class="card">
+    <div class="card-hd">🎯 O que vamos construir</div>
+    <div class="flow">
+      <div class="fnode ft"><div class="fnode-ic">📝</div>Webhook<div class="fnode-lbl">FORMULÁRIO</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fi"><div class="fnode-ic">🧠</div>OpenAI<div class="fnode-lbl">CLASSIFICA</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">🔀</div>Switch<div class="fnode-lbl">TIPO SINISTRO</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">⚙️</div>Set Node<div class="fnode-lbl">REGULADOR</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">📋</div>Sheets<div class="fnode-lbl">REGISTRA</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">📋 Passo a Passo</div>
+    <ul class="slist">
+      <li><div class="snum">01</div><div>Crie workflow no n8n: <em>"Acionamento de Sinistro v1"</em></div></li>
+      <li><div class="snum">02</div><div>Adicione <strong>Webhook Trigger</strong>. Copie a URL gerada. Ative modo Test.</div></li>
+      <li><div class="snum">03</div><div>Adicione <strong>OpenAI → Chat</strong>. System prompt: <code>"Classifique em: roubo, colisão, incêndio, vidros ou outros. Retorne apenas a categoria."</code></div></li>
+      <li><div class="snum">04</div><div>Adicione <strong>Switch Node</strong> com rotas: roubo / colisão / incêndio / outros baseado em <code>{{ $json.message.content }}</code></div></li>
+      <li><div class="snum">05</div><div>Em cada rota, <strong>Set Node</strong> define o regulador e prioridade (roubo=P1, colisão=P2...).</div></li>
+      <li><div class="snum">06</div><div>Adicione <strong>Google Sheets</strong> para registrar o acionamento com todos os campos.</div></li>
+      <li><div class="snum">07</div><div>Teste enviando POST pelo Postman com o JSON abaixo.</div></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-hd">📦 JSON de Teste</div>
+    <div class="codeblock">{
+  <span class="ck">"associado_id"</span>: <span class="cs">"MOB-2024-1547"</span>,
+  <span class="ck">"nome"</span>: <span class="cs">"Ana Beatriz Santos"</span>,
+  <span class="ck">"plano"</span>: <span class="cs">"Premium"</span>,
+  <span class="ck">"descricao"</span>: <span class="cs">"Meu carro foi batido por trás em um semáforo. O outro motorista saiu."</span>,
+  <span class="ck">"veiculo"</span>: <span class="cs">"Honda HRV 2022"</span>,
+  <span class="ck">"tem_boletim"</span>: <span class="cv">true</span>
+}</div>
+    <div class="callout callout-g">A IA deve classificar como <strong>"colisão"</strong> e rotear para o regulador com prioridade P2.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m3l3">
+      <li onclick="chk(this,'m3l3',0)"><div class="cb">✓</div>Workflow criado e ativado com Webhook Trigger</li>
+      <li onclick="chk(this,'m3l3',1)"><div class="cb">✓</div>OpenAI classifica o tipo de sinistro corretamente</li>
+      <li onclick="chk(this,'m3l3',2)"><div class="cb">✓</div>Switch Node roteia para o caminho certo</li>
+      <li onclick="chk(this,'m3l3',3)"><div class="cb">✓</div>Registro salvo no Google Sheets com sucesso</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m3l2')">← Anterior</button><button class="btn btn-done" onclick="done('m3l3','m3l4')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m3l4">
+  <div class="l-eyebrow">Módulo 3 · Lição 4 de 5</div>
+  <div class="l-title">n8n + OpenAI + WhatsApp</div>
+  <div class="l-desc">A tríade da Central Inteligente. Integre os três e tenha um agente de atendimento funcional no WhatsApp.</div>
+  <div class="card">
+    <div class="card-hd">📱 WhatsApp: 2 Caminhos</div>
+    <ul class="slist">
+      <li><div class="snum">🟢</div><div><strong>API Oficial Meta:</strong> para escala. Provedores: Twilio, 360Dialog, Infobip. Custo por conversa (~R$0,07). Requer aprovação da Meta.</div></li>
+      <li><div class="snum">🟡</div><div><strong>Evolution API (self-hosted):</strong> open-source, conecta via QR Code, sem custo por mensagem. Ideal para testes e escala inicial.</div></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-hd">🔄 Fluxo Completo de Atendimento</div>
+    <ul class="slist">
+      <li><div class="snum">01</div><div><strong>Trigger Webhook</strong> recebe mensagem do WhatsApp. Payload: número, texto, timestamp.</div></li>
+      <li><div class="snum">02</div><div><strong>HTTP Request ao CRM</strong> busca o associado pelo telefone. Retorna plano, sinistros abertos, histórico.</div></li>
+      <li><div class="snum">03</div><div><strong>Set Node</strong> combina histórico do CRM + mensagem atual em JSON único para a OpenAI.</div></li>
+      <li><div class="snum">04</div><div><strong>OpenAI</strong> recebe mensagem + contexto do associado e gera resposta personalizada.</div></li>
+      <li><div class="snum">05</div><div><strong>HTTP Request</strong> envia a resposta de volta ao número no WhatsApp via API.</div></li>
+      <li><div class="snum">06</div><div><strong>CRM</strong> registra a interação: data, canal, resumo, flag de escalada se necessário.</div></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-hd">🧠 System Prompt do Agente Mobili</div>
+    <div class="codeblock"><span class="cs">Você é o assistente virtual da Mobili Proteção Veicular.
+Seu nome é Moli. Você é cordial, objetivo e empático.
+
+REGRAS:
+- Responda em no máximo 3 parágrafos curtos
+- Nunca invente coberturas ou valores não confirmados  
+- Se não souber: "Vou verificar e retorno em instantes"
+- Para sinistros, colete: local, data e se tem boletim
+- Escale para humano se: tom agressivo, sinistro grave, reclamação formal
+
+CONTEXTO DO ASSOCIADO:
+Nome: </span>{{ <span class="ca">$json</span>.<span class="cv">associado.nome</span> }}<span class="cs">
+Plano: </span>{{ <span class="ca">$json</span>.<span class="cv">associado.plano</span> }}<span class="cs">
+Sinistros abertos: </span>{{ <span class="ca">$json</span>.<span class="cv">associado.sinistros_abertos</span> }}</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m3l4">
+      <li onclick="chk(this,'m3l4',0)"><div class="cb">✓</div>Entendo a diferença entre API oficial Meta e Evolution API</li>
+      <li onclick="chk(this,'m3l4',1)"><div class="cb">✓</div>Construí o fluxo completo de atendimento no n8n</li>
+      <li onclick="chk(this,'m3l4',2)"><div class="cb">✓</div>O system prompt inclui contexto do CRM do associado</li>
+      <li onclick="chk(this,'m3l4',3)"><div class="cb">✓</div>A resposta da IA é enviada de volta ao WhatsApp com sucesso</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m3l3')">← Anterior</button><button class="btn btn-done" onclick="done('m3l4','m3l5')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m3l5">
+  <div class="l-eyebrow">Módulo 3 · Avaliação</div>
+  <div class="l-title">Quiz + Autoavaliação</div>
+  <div class="l-desc">Valide o domínio do n8n antes de avançar para Engenharia de Prompt.</div>
+  <div class="card">
+    <div class="card-hd">❓ Quiz — Módulo 3</div>
+    <div class="qwrap">
+      <div class="qq">1. No n8n, qual node cria caminhos diferentes dependendo do tipo de sinistro?</div>
+      <ul class="qopts" id="q-m3q1"><li onclick="ans(this,'m3q1','a')">Set Node</li><li onclick="ans(this,'m3q1','b')">Merge Node</li><li onclick="ans(this,'m3q1','c')">Switch Node ✓</li><li onclick="ans(this,'m3q1','d')">Function Node</li></ul>
+      <div class="qfb" id="fb-m3q1"></div>
+    </div>
+    <hr class="qdivider">
+    <div class="qwrap">
+      <div class="qq">2. Para acessar o campo "status" do node chamado "CRM Request", a expressão correta é:</div>
+      <ul class="qopts" id="q-m3q2"><li onclick="ans(this,'m3q2','a')">{{ $data.status }}</li><li onclick="ans(this,'m3q2','b')">{{ $node["CRM Request"].json.status }} ✓</li><li onclick="ans(this,'m3q2','c')">{{ node.output.status }}</li><li onclick="ans(this,'m3q2','d')">{{ $json["CRM Request"].status }}</li></ul>
+      <div class="qfb" id="fb-m3q2"></div>
+    </div>
+    <hr class="qdivider">
+    <div class="qwrap">
+      <div class="qq">3. Principal vantagem do n8n self-hosted para a Mobili:</div>
+      <ul class="qopts" id="q-m3q3"><li onclick="ans(this,'m3q3','a')">Interface mais bonita</li><li onclick="ans(this,'m3q3','b')">Suporte 24h da equipe n8n</li><li onclick="ans(this,'m3q3','c')">Controle total dos dados sensíveis dos associados ✓</li><li onclick="ans(this,'m3q3','d')">Gratuito para uso comercial intenso</li></ul>
+      <div class="qfb" id="fb-m3q3"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">⭐ Autoavaliação</div>
+    <div class="se">
+      <div class="se-item"><div class="se-lbl">Capacidade de criar workflows funcionais no n8n</div><div class="stars" data-id="m3-1" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+      <div class="se-item"><div class="se-lbl">Confiança na integração n8n + OpenAI + WhatsApp</div><div class="stars" data-id="m3-2" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+    </div>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m3l4')">← Anterior</button><button class="btn btn-done" onclick="done('m3l5','m4l1')">Concluir Módulo 3 →</button></div>
+</div>
+<!-- ══ MÓDULO 4 ══ -->
+<div class="view" id="view-m4l1">
+  <div class="l-eyebrow">Módulo 4 · Lição 1 de 5</div>
+  <div class="l-title">API OpenAI a Fundo</div>
+  <div class="l-desc">Domine todos os parâmetros da API da OpenAI — de tokens a embeddings — para extrair o máximo dos modelos nos seus agentes.</div>
+  <div class="card">
+    <div class="card-hd">🔑 Endpoints Essenciais</div>
+    <table class="tbl">
+      <thead><tr><th>Endpoint</th><th>Uso</th><th>Quando usar</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--mono);color:var(--blue)">/chat/completions</td><td>Geração de texto, conversas</td><td>Agentes, atendimento, classificação</td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--blue)">/embeddings</td><td>Vetorização de texto</td><td>Busca semântica em documentos</td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--blue)">/audio/transcriptions</td><td>Voz → texto (Whisper)</td><td>Transcrever áudios do WhatsApp</td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--blue)">/images/generations</td><td>Geração de imagens</td><td>DALL-E para criação visual</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-hd">⚙️ Parâmetros Avançados do Chat</div>
+    <div class="codeblock">{
+  <span class="ck">"model"</span>: <span class="cs">"gpt-4o"</span>,            <span class="cm">// gpt-4o-mini para custo baixo</span>
+  <span class="ck">"messages"</span>: [...],
+  <span class="ck">"temperature"</span>: <span class="cv">0.2</span>,       <span class="cm">// 0=preciso, 1=criativo</span>
+  <span class="ck">"max_tokens"</span>: <span class="cv">500</span>,        <span class="cm">// limite de tokens na resposta</span>
+  <span class="ck">"top_p"</span>: <span class="cv">0.9</span>,             <span class="cm">// diversidade das opções (alternativa à temp)</span>
+  <span class="ck">"frequency_penalty"</span>: <span class="cv">0.3</span>, <span class="cm">// reduz repetições</span>
+  <span class="ck">"presence_penalty"</span>: <span class="cv">0.1</span>,  <span class="cm">// incentiva tópicos novos</span>
+  <span class="ck">"response_format"</span>: {<span class="ck">"type"</span>: <span class="cs">"json_object"</span>}  <span class="cm">// força JSON válido</span>
+}</div>
+    <div class="callout callout-y"><strong>response_format json_object</strong> é ouro para automações: garante que a resposta seja sempre JSON parseável, sem texto extra que quebre o fluxo.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">💰 Controle de Custos</div>
+    <ul class="slist">
+      <li><div class="snum">💡</div><div><strong>Use gpt-4o-mini</strong> para classificação, triagem e tarefas simples. Custo ~20x menor que GPT-4o.</div></li>
+      <li><div class="snum">💡</div><div><strong>Limite max_tokens</strong> — para triagem de reclamações, 100-200 tokens são suficientes. Para geração de relatórios, 800-1500.</div></li>
+      <li><div class="snum">💡</div><div><strong>Cache do sistema:</strong> system prompts idênticos têm desconto de 50% no OpenAI. Padronize os prompts dos seus agentes.</div></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m4l1">
+      <li onclick="chk(this,'m4l1',0)"><div class="cb">✓</div>Conheço os 4 principais endpoints da API OpenAI</li>
+      <li onclick="chk(this,'m4l1',1)"><div class="cb">✓</div>Sei usar response_format json_object para automações</li>
+      <li onclick="chk(this,'m4l1',2)"><div class="cb">✓</div>Tenho estratégia de controle de custos definida</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m3l5')">← Anterior</button><button class="btn btn-done" onclick="done('m4l1','m4l2')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m4l2">
+  <div class="l-eyebrow">Módulo 4 · Lição 2 de 5</div>
+  <div class="l-title">Engenharia de Prompt</div>
+  <div class="l-desc">A habilidade que multiplica o valor de qualquer modelo. Um prompt bem construído transforma respostas mediocres em resultados profissionais.</div>
+  <div class="card">
+    <div class="card-hd">📖 O que é Engenharia de Prompt</div>
+    <p>Engenharia de Prompt é a arte de estruturar instruções para extrair o melhor comportamento de um modelo de linguagem. A qualidade do output é diretamente proporcional à qualidade do input.</p>
+    <div class="callout callout-p"><strong>Princípio fundamental:</strong> trate o modelo como um funcionário brilhante que acaba de entrar na empresa. Ele é capaz, mas precisa de contexto claro, exemplos concretos e critérios explícitos de sucesso.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🏗️ Estrutura RECIPE para Prompts Profissionais</div>
+    <ul class="slist">
+      <li><div class="snum">R</div><div><strong>Role (Papel):</strong> "Você é um especialista em atendimento ao cliente de seguros com 10 anos de experiência."</div></li>
+      <li><div class="snum">E</div><div><strong>Expectation (Objetivo):</strong> "Sua tarefa é classificar a reclamação a seguir em uma das categorias e avaliar a urgência."</div></li>
+      <li><div class="snum">C</div><div><strong>Context (Contexto):</strong> "A empresa é uma associação de proteção veicular. Os planos são: Basic, Standard, Premium."</div></li>
+      <li><div class="snum">I</div><div><strong>Instructions (Regras):</strong> "Nunca invente informações. Se não souber, responda 'informação não disponível'."</div></li>
+      <li><div class="snum">P</div><div><strong>Persona (Tom):</strong> "Tom: profissional, empático, sem jargões técnicos."</div></li>
+      <li><div class="snum">E</div><div><strong>Example (Exemplo):</strong> Forneça 1-2 exemplos do formato esperado de resposta.</div></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-hd">🛠️ Prompt Builder Interativo</div>
+    <div class="pb-wrap">
+      <textarea class="pb-field" id="pb-role" placeholder="Papel do agente (ex: você é atendente da Mobili...)" rows="2"></textarea>
+      <textarea class="pb-field" id="pb-task" placeholder="Tarefa específica (ex: classifique a reclamação em: urgente, normal, baixa)" rows="2"></textarea>
+      <textarea class="pb-field" id="pb-rules" placeholder="Regras e restrições (ex: nunca invente valores, sempre peça o número do contrato)" rows="2"></textarea>
+      <textarea class="pb-field" id="pb-format" placeholder="Formato de saída esperado (ex: retorne JSON com campos: categoria, urgencia, acao)" rows="2"></textarea>
+      <button class="pb-btn" onclick="buildPrompt()">⚡ Gerar System Prompt</button>
+      <div style="margin-top:12px;font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:6px;">PROMPT GERADO:</div>
+      <div class="pb-out" id="pb-out">Preencha os campos acima e clique em Gerar.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m4l2">
+      <li onclick="chk(this,'m4l2',0)"><div class="cb">✓</div>Conheço a estrutura RECIPE para prompts profissionais</li>
+      <li onclick="chk(this,'m4l2',1)"><div class="cb">✓</div>Criei um system prompt para o agente de Ouvidoria usando o builder</li>
+      <li onclick="chk(this,'m4l2',2)"><div class="cb">✓</div>Testei o prompt no Postman e avaliei a qualidade da resposta</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m4l1')">← Anterior</button><button class="btn btn-done" onclick="done('m4l2','m4l3')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m4l3">
+  <div class="l-eyebrow">Módulo 4 · Lição 3 de 5</div>
+  <div class="l-title">Few-Shot e Chain-of-Thought</div>
+  <div class="l-desc">Duas técnicas avançadas que elevam drasticamente a precisão dos seus agentes em tarefas complexas.</div>
+  <div class="card">
+    <div class="card-hd">🎯 Few-Shot: Aprender com Exemplos</div>
+    <p>Few-shot é fornecer exemplos de input/output no próprio prompt para que o modelo aprenda o padrão exato desejado. Mais eficaz que descrever o comportamento em palavras.</p>
+    <div class="codeblock"><span class="cm">// Exemplo: classificação de sentimento para Ouvidoria</span>
+{
+  <span class="ck">"role"</span>: <span class="cs">"system"</span>,
+  <span class="ck">"content"</span>: <span class="cs">"Classifique o sentimento da mensagem.\n\nEXEMPLOS:\nInput: 'Estou muito satisfeito com o atendimento'\nOutput: {\"sentimento\": \"positivo\", \"urgencia\": \"baixa\"}\n\nInput: 'Vou processar vocês, absurdo isso!'\nOutput: {\"sentimento\": \"negativo\", \"urgencia\": \"alta\"}\n\nClassifique a nova mensagem seguindo exatamente este formato."</span>
+}</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🔗 Chain-of-Thought: Raciocínio Passo a Passo</div>
+    <p>Chain-of-Thought (CoT) instrui o modelo a raciocinar explicitamente antes de responder. Para tarefas complexas, isso aumenta significativamente a precisão.</p>
+    <div class="codeblock"><span class="cm">// Prompt com CoT para análise de sinistro</span>
+<span class="cs">"Analise o sinistro seguindo exatamente estes passos:
+
+PASSO 1 — Identifique o tipo de ocorrência
+PASSO 2 — Verifique se há documentação mencionada
+PASSO 3 — Avalie a urgência (P1=roubo/incêndio, P2=colisão, P3=demais)
+PASSO 4 — Determine o regulador responsável
+PASSO 5 — Retorne o JSON final com todos os campos
+
+Sinistro: {{mensagem_do_associado}}"</span></div>
+    <div class="callout callout-b"><strong>Quando usar CoT:</strong> decisões multi-critério, análise de elegibilidade de cobertura, triagem complexa de reclamações. Para tarefas simples, CoT é desnecessário e aumenta custo.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m4l3">
+      <li onclick="chk(this,'m4l3',0)"><div class="cb">✓</div>Sei quando usar Few-shot vs. Zero-shot</li>
+      <li onclick="chk(this,'m4l3',1)"><div class="cb">✓</div>Criei um prompt com CoT para análise de sinistro</li>
+      <li onclick="chk(this,'m4l3',2)"><div class="cb">✓</div>Testei e comparei a qualidade com/sem essas técnicas</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m4l2')">← Anterior</button><button class="btn btn-done" onclick="done('m4l3','m4l4')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m4l4">
+  <div class="l-eyebrow">Módulo 4 · Lição 4 de 5</div>
+  <div class="l-title">Function Calling</div>
+  <div class="l-desc">Function Calling permite que a IA decida quando chamar uma ferramenta externa — a base técnica dos agentes autônomos.</div>
+  <div class="card">
+    <div class="card-hd">📖 O que é Function Calling</div>
+    <p>Com Function Calling, você descreve funções disponíveis (buscar no CRM, abrir sinistro, enviar e-mail) e o modelo decide <strong>quando e como chamar cada uma</strong> com base na conversa. O modelo não executa o código — ele retorna um JSON dizendo qual função chamar e com quais parâmetros.</p>
+    <div class="callout callout-p"><strong>Impacto real:</strong> é a diferença entre um chatbot que só responde e um agente que age. Com Function Calling, o agente pode consultar o CRM, abrir tickets, enviar notificações — tudo decidido pela IA com base no contexto.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🛠️ Estrutura de uma Function</div>
+    <div class="codeblock">{
+  <span class="ck">"tools"</span>: [{
+    <span class="ck">"type"</span>: <span class="cs">"function"</span>,
+    <span class="ck">"function"</span>: {
+      <span class="ck">"name"</span>: <span class="cs">"buscar_associado"</span>,
+      <span class="ck">"description"</span>: <span class="cs">"Busca dados do associado no CRM pelo número de telefone"</span>,
+      <span class="ck">"parameters"</span>: {
+        <span class="ck">"type"</span>: <span class="cs">"object"</span>,
+        <span class="ck">"properties"</span>: {
+          <span class="ck">"telefone"</span>: {
+            <span class="ck">"type"</span>: <span class="cs">"string"</span>,
+            <span class="ck">"description"</span>: <span class="cs">"Número com DDD, ex: 31999887766"</span>
+          }
+        },
+        <span class="ck">"required"</span>: [<span class="cs">"telefone"</span>]
+      }
+    }
+  }]
+}</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🔄 Ciclo de Execução do Agente</div>
+    <div class="flow">
+      <div class="fnode ft"><div class="fnode-ic">💬</div>Usuário<div class="fnode-lbl">MENSAGEM</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fi"><div class="fnode-ic">🧠</div>OpenAI<div class="fnode-lbl">DECIDE</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">📞</div>Function<div class="fnode-lbl">CHAMA API</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">📦</div>Resultado<div class="fnode-lbl">RETORNA</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fi"><div class="fnode-ic">🧠</div>OpenAI<div class="fnode-lbl">RESPONDE</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m4l4">
+      <li onclick="chk(this,'m4l4',0)"><div class="cb">✓</div>Entendo a diferença entre chatbot e agente com Function Calling</li>
+      <li onclick="chk(this,'m4l4',1)"><div class="cb">✓</div>Criei a definição JSON de ao menos uma função para meu agente</li>
+      <li onclick="chk(this,'m4l4',2)"><div class="cb">✓</div>Testei o ciclo completo: mensagem → função → resposta</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m4l3')">← Anterior</button><button class="btn btn-done" onclick="done('m4l4','m4l5')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m4l5">
+  <div class="l-eyebrow">Módulo 4 · Avaliação</div>
+  <div class="l-title">Quiz + Autoavaliação</div>
+  <div class="l-desc">Valide o domínio de Prompts e OpenAI antes de partir para WhatsApp.</div>
+  <div class="card">
+    <div class="card-hd">❓ Quiz — Módulo 4</div>
+    <div class="qwrap">
+      <div class="qq">1. Para garantir que a OpenAI retorne sempre um JSON válido (sem texto extra), qual parâmetro usar?</div>
+      <ul class="qopts" id="q-m4q1"><li onclick="ans(this,'m4q1','a')">temperature: 0</li><li onclick="ans(this,'m4q1','b')">response_format: {type: "json_object"} ✓</li><li onclick="ans(this,'m4q1','c')">max_tokens: 100</li><li onclick="ans(this,'m4q1','d')">top_p: 0</li></ul>
+      <div class="qfb" id="fb-m4q1"></div>
+    </div>
+    <hr class="qdivider">
+    <div class="qwrap">
+      <div class="qq">2. Qual técnica é mais eficaz para ensinar o modelo a classificar reclamações no formato exato desejado?</div>
+      <ul class="qopts" id="q-m4q2"><li onclick="ans(this,'m4q2','a')">Aumentar o max_tokens</li><li onclick="ans(this,'m4q2','b')">Reduzir a temperatura</li><li onclick="ans(this,'m4q2','c')">Few-shot com exemplos de input/output ✓</li><li onclick="ans(this,'m4q2','d')">Usar o modelo mais caro</li></ul>
+      <div class="qfb" id="fb-m4q2"></div>
+    </div>
+    <hr class="qdivider">
+    <div class="qwrap">
+      <div class="qq">3. Function Calling permite que a IA:</div>
+      <ul class="qopts" id="q-m4q3"><li onclick="ans(this,'m4q3','a')">Execute código Python diretamente</li><li onclick="ans(this,'m4q3','b')">Decida quando chamar ferramentas externas e com quais parâmetros ✓</li><li onclick="ans(this,'m4q3','c')">Acesse o banco de dados da empresa automaticamente</li><li onclick="ans(this,'m4q3','d')">Gere imagens junto com texto</li></ul>
+      <div class="qfb" id="fb-m4q3"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">⭐ Autoavaliação</div>
+    <div class="se">
+      <div class="se-item"><div class="se-lbl">Domínio da Engenharia de Prompt (RECIPE, Few-shot, CoT)</div><div class="stars" data-id="m4-1" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+      <div class="se-item"><div class="se-lbl">Confiança para implementar Function Calling nos agentes</div><div class="stars" data-id="m4-2" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+    </div>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m4l4')">← Anterior</button><button class="btn btn-done" onclick="done('m4l5','m5l1')">Concluir Módulo 4 →</button></div>
+</div>
+<!-- ══ MÓDULO 5 ══ -->
+<div class="view" id="view-m5l1">
+  <div class="l-eyebrow">Módulo 5 · Lição 1 de 5</div>
+  <div class="l-title">WhatsApp Business API</div>
+  <div class="l-desc">O canal de maior alcance no Brasil. Entenda a arquitetura oficial para integrações profissionais e conformes.</div>
+  <div class="card">
+    <div class="card-hd">📱 Arquitetura da WhatsApp Business API</div>
+    <p>A API oficial da Meta permite automatizar mensagens no WhatsApp de forma escalável e dentro das políticas da plataforma. Diferente do app pessoal, ela exige aprovação da Meta e opera por provedores homologados (BSPs).</p>
+    <div class="grid2">
+      <div class="ccard"><div class="ccard-icon">🏢</div><div class="ccard-title">Meta (Cloud API)</div><div class="ccard-desc">Hospedada pela Meta. Sem servidor próprio. Mais simples de implementar. Recomendada para novos projetos.</div></div>
+      <div class="ccard"><div class="ccard-icon">🖥️</div><div class="ccard-title">On-Premise API</div><div class="ccard-desc">Hospedada pelo próprio negócio. Mais controle, mais complexidade. Em descontinuação pela Meta.</div></div>
+      <div class="ccard"><div class="ccard-icon">🔗</div><div class="ccard-title">BSP (Provedor)</div><div class="ccard-desc">Twilio, 360Dialog, Infobip, Zenvia. Intermediários que simplificam o acesso à API. Cobram por conversa.</div></div>
+      <div class="ccard"><div class="ccard-icon">⚡</div><div class="ccard-title">Evolution API</div><div class="ccard-desc">Solução open-source não oficial. Ideal para testes e pilotos internos. Sem custo por mensagem.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">💰 Modelo de Cobrança Meta (2024)</div>
+    <table class="tbl">
+      <thead><tr><th>Tipo de Conversa</th><th>Iniciada por</th><th>Custo aprox. (Brasil)</th></tr></thead>
+      <tbody>
+        <tr><td>Utility</td><td>Empresa</td><td style="color:var(--green)">~R$0,07</td></tr>
+        <tr><td>Marketing</td><td>Empresa</td><td style="color:var(--yellow)">~R$0,22</td></tr>
+        <tr><td>Autenticação</td><td>Empresa</td><td style="color:var(--green)">~R$0,05</td></tr>
+        <tr><td>Service</td><td>Usuário</td><td style="color:var(--green)">Gratuita (janela 24h)</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-g"><strong>Estratégia:</strong> incentive o associado a iniciar a conversa (Service = gratuita). Use templates de Utility para notificações transacionais. Evite Marketing a menos que seja campanha deliberada.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m5l1">
+      <li onclick="chk(this,'m5l1',0)"><div class="cb">✓</div>Entendo a diferença entre Cloud API, On-Premise e Evolution API</li>
+      <li onclick="chk(this,'m5l1',1)"><div class="cb">✓</div>Conheço o modelo de cobrança e sei calcular custo por mês</li>
+      <li onclick="chk(this,'m5l1',2)"><div class="cb">✓</div>Defini qual caminho usar para o projeto da Mobili</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m4l5')">← Anterior</button><button class="btn btn-done" onclick="done('m5l1','m5l2')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m5l2">
+  <div class="l-eyebrow">Módulo 5 · Lição 2 de 5</div>
+  <div class="l-title">Evolution API — Setup Completo</div>
+  <div class="l-desc">Suba sua própria instância da Evolution API para testes e desenvolvimento sem custo por mensagem.</div>
+  <div class="card">
+    <div class="card-hd">🚀 Instalação com Docker</div>
+    <ul class="slist">
+      <li><div class="snum">01</div><div>Certifique-se de ter Docker instalado. Em VPS Ubuntu: <code>curl -fsSL https://get.docker.com | sh</code></div></li>
+      <li><div class="snum">02</div><div>Crie o arquivo docker-compose.yml com a configuração da Evolution API e Redis.</div></li>
+      <li><div class="snum">03</div><div>Execute: <code>docker-compose up -d</code>. Acesse: <code>http://SEU_IP:8080</code></div></li>
+      <li><div class="snum">04</div><div>Crie uma instância via API: <code>POST /instance/create</code> com o nome da sua instância.</div></li>
+      <li><div class="snum">05</div><div>Busque o QR Code: <code>GET /instance/qrcode/SEU_NOME</code> e escaneie com o WhatsApp.</div></li>
+    </ul>
+    <div class="codeblock"><span class="cm">// Criar instância</span>
+POST http://SEU_IP:8080/instance/create
+<span class="ck">apikey</span>: SUA_API_KEY
+
+{
+  <span class="ck">"instanceName"</span>: <span class="cs">"mobili-atendimento"</span>,
+  <span class="ck">"token"</span>: <span class="cs">"TOKEN_SECRETO"</span>,
+  <span class="ck">"qrcode"</span>: <span class="cv">true</span>
+}</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🔗 Configurando Webhook para o n8n</div>
+    <div class="codeblock"><span class="cm">// Configurar webhook para receber mensagens no n8n</span>
+POST http://SEU_IP:8080/webhook/set/mobili-atendimento
+
+{
+  <span class="ck">"url"</span>: <span class="cs">"https://seu-n8n.com/webhook/whatsapp"</span>,
+  <span class="ck">"webhook_by_events"</span>: <span class="cv">true</span>,
+  <span class="ck">"events"</span>: [
+    <span class="cs">"MESSAGES_UPSERT"</span>,
+    <span class="cs">"CONNECTION_UPDATE"</span>
+  ]
+}</div>
+    <div class="callout callout-y"><strong>A partir deste ponto</strong>, toda mensagem recebida no WhatsApp conectado dispara automaticamente o webhook do n8n — iniciando o fluxo de atendimento inteligente.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m5l2">
+      <li onclick="chk(this,'m5l2',0)"><div class="cb">✓</div>Evolution API instalada e rodando no servidor</li>
+      <li onclick="chk(this,'m5l2',1)"><div class="cb">✓</div>Instância criada e QR Code escaneado com sucesso</li>
+      <li onclick="chk(this,'m5l2',2)"><div class="cb">✓</div>Webhook configurado apontando para o n8n</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m5l1')">← Anterior</button><button class="btn btn-done" onclick="done('m5l2','m5l3')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m5l3">
+  <div class="l-eyebrow">Módulo 5 · Lição 3 de 5</div>
+  <div class="l-title">Templates e Tipos de Mensagem</div>
+  <div class="l-desc">Domine os formatos de mensagem do WhatsApp para criar comunicações profissionais e conformes.</div>
+  <div class="card">
+    <div class="card-hd">📋 Tipos de Mensagem</div>
+    <table class="tbl">
+      <thead><tr><th>Tipo</th><th>Quando usar</th><th>Requer aprovação?</th></tr></thead>
+      <tbody>
+        <tr><td>Text</td><td>Resposta livre dentro da janela 24h</td><td style="color:var(--green)">Não</td></tr>
+        <tr><td>Template (HSM)</td><td>Iniciar conversa ou fora da janela 24h</td><td style="color:var(--yellow)">Sim (Meta)</td></tr>
+        <tr><td>Interactive (Buttons)</td><td>Menus com até 3 botões de resposta</td><td style="color:var(--green)">Não (janela 24h)</td></tr>
+        <tr><td>Interactive (List)</td><td>Listas com até 10 opções</td><td style="color:var(--green)">Não (janela 24h)</td></tr>
+        <tr><td>Media (img/doc/audio)</td><td>Enviar arquivos, imagens, áudios</td><td style="color:var(--green)">Não (janela 24h)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-hd">💬 Simulador de Conversa</div>
+    <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
+      <div class="wa-preview">
+        <div class="wa-hd">
+          <div class="wa-av">🤖</div>
+          <div><div class="wa-name">Moli — Mobili</div><div class="wa-status">● online</div></div>
+        </div>
+        <div class="wa-msgs" id="wa-conv">
+          <div class="wa-msg recv">Olá! Preciso acionar meu seguro, meu carro foi arranhado no estacionamento.<div class="wa-time">14:32</div></div>
+          <div class="wa-msg ai">Olá! Sou a Moli, assistente virtual da Mobili 🙂 Vou te ajudar com o acionamento. Para prosseguir, preciso de algumas informações:<div class="wa-time">14:32</div></div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;">
+          <button onclick="waReply('associado')" style="font-size:10px;padding:5px 10px;background:var(--surf3);border:1px solid var(--bdr2);color:var(--sub);border-radius:6px;cursor:pointer;">📋 Ver plano</button>
+          <button onclick="waReply('sinistro')" style="font-size:10px;padding:5px 10px;background:var(--surf3);border:1px solid var(--bdr2);color:var(--sub);border-radius:6px;cursor:pointer;">🚗 Acionar sinistro</button>
+          <button onclick="waReply('humano')" style="font-size:10px;padding:5px 10px;background:var(--surf3);border:1px solid var(--bdr2);color:var(--sub);border-radius:6px;cursor:pointer;">👤 Falar com humano</button>
+        </div>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <div style="font-size:11px;color:var(--sub);margin-bottom:8px;font-family:var(--mono);">FLUXO ATIVADO:</div>
+        <div id="wa-flow-desc" style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:12px;">
+          Clique em uma opção do menu para ver o fluxo n8n ativado.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist</div>
+    <ul class="cl" id="cl-m5l3">
+      <li onclick="chk(this,'m5l3',0)"><div class="cb">✓</div>Sei a diferença entre mensagens livres e templates</li>
+      <li onclick="chk(this,'m5l3',1)"><div class="cb">✓</div>Entendo quando usar botões interativos vs. texto livre</li>
+      <li onclick="chk(this,'m5l3',2)"><div class="cb">✓</div>Criei ao menos um template de notificação de sinistro</li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m5l2')">← Anterior</button><button class="btn btn-done" onclick="done('m5l3','m5l4')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m5l4">
+  <div class="l-eyebrow">Módulo 5 · Lição 4 de 5</div>
+  <div class="l-title">Bot Completo de Atendimento</div>
+  <div class="l-desc">Una tudo que aprendeu. Construa o bot de atendimento completo da Central Inteligente da Mobili.</div>
+  <div class="card">
+    <div class="card-hd">🏗️ Arquitetura Final do Bot</div>
+    <div class="flow">
+      <div class="fnode ft"><div class="fnode-ic">📩</div>Msg WA<div class="fnode-lbl">RECEBE</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fi"><div class="fnode-ic">🧠</div>Intenção<div class="fnode-lbl">CLASSIFICA</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">🔀</div>Rota<div class="fnode-lbl">DIRECIONA</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fi"><div class="fnode-ic">🤖</div>Agente<div class="fnode-lbl">RESPONDE</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">📤</div>WA API<div class="fnode-lbl">ENVIA</div></div>
+      <div class="farr">→</div>
+      <div class="fnode fa"><div class="fnode-ic">📊</div>CRM<div class="fnode-lbl">REGISTRA</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">🔀 5 Intenções Mapeadas</div>
+    <ul class="slist">
+      <li><div class="snum">🚗</div><div><strong>Acionamento de Sinistro:</strong> aciona o workflow de classificação → encaminha ao regulador correto → confirma ao associado.</div></li>
+      <li><div class="snum">📋</div><div><strong>Consulta de Contrato/Plano:</strong> busca dados no CRM → responde coberturas e valores do plano do associado.</div></li>
+      <li><div class="snum">💰</div><div><strong>Financeiro (boleto/cobrança):</strong> gera link de pagamento ou escala para financeiro → registra interação.</div></li>
+      <li><div class="snum">📣</div><div><strong>Ouvidoria/Reclamação:</strong> classifica sentimento → registra com flag de urgência → notifica supervisor se P1.</div></li>
+      <li><div class="snum">👤</div><div><strong>Solicitação de Humano:</strong> escala para atendente disponível → informa tempo de espera → transfere contexto.</div></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-hd">⚠️ Regras de Escalonamento</div>
+    <div class="callout callout-p">
+      <strong>Sempre escale para humano quando:</strong><br>
+      ① Tom agressivo ou ameaças legais detectados pelo modelo<br>
+      ② Sinistro com valor estimado acima de R$ 10.000<br>
+      ③ Terceira mensagem sem resolução na mesma sessão<br>
+      ④ Palavra-chave: "processo", "procon", "Reclame Aqui"<br>
+      ⑤ Solicitação explícita do associado
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">✅ Checklist Final do Módulo 5</div>
+    <ul class="cl" id="cl-m5l4">
+      <li onclick="chk(this,'m5l4',0)"><div class="cb">✓</div>Bot recebe mensagens do WhatsApp via webhook</li>
+      <li onclick="chk(this,'m5l4',1)"><div class="cb">✓</div>Classifica a intenção corretamente em 5 categorias</li>
+      <li onclick="chk(this,'m5l4',2)"><div class="cb">✓</div>Cada rota responde e registra no CRM</li>
+      <li onclick="chk(this,'m5l4',3)"><div class="cb">✓</div>Regras de escalonamento para humano implementadas</li>
+      <li onclick="chk(this,'m5l4',4)"><div class="cb">✓</div>Testei os 5 fluxos com cenários reais da Mobili</div></li>
+    </ul>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m5l3')">← Anterior</button><button class="btn btn-done" onclick="done('m5l4','m5l5')">Concluir e Avançar →</button></div>
+</div>
+
+<div class="view" id="view-m5l5">
+  <div class="l-eyebrow">Módulo 5 · Avaliação Final</div>
+  <div class="l-title">Quiz + Autoavaliação</div>
+  <div class="l-desc">Última avaliação dos módulos 1-5. Você está a meio caminho da Central Inteligente completa.</div>
+  <div class="card">
+    <div class="card-hd">❓ Quiz — Módulo 5</div>
+    <div class="qwrap">
+      <div class="qq">1. Um associado envia mensagem às 23h sobre um sinistro. O bot não consegue resolver. A conversa fica sem resposta até as 9h. Qual é o problema técnico?</div>
+      <ul class="qopts" id="q-m5q1"><li onclick="ans(this,'m5q1','a')">O servidor n8n está offline</li><li onclick="ans(this,'m5q1','b')">A janela de 24h expirou — agora só templates podem iniciar nova conversa ✓</li><li onclick="ans(this,'m5q1','c')">O API Key da OpenAI expirou</li><li onclick="ans(this,'m5q1','d')">O webhook parou de funcionar</li></ul>
+      <div class="qfb" id="fb-m5q1"></div>
+    </div>
+    <hr class="qdivider">
+    <div class="qwrap">
+      <div class="qq">2. Qual tipo de conversa WhatsApp é <strong>gratuita</strong> para a empresa?</div>
+      <ul class="qopts" id="q-m5q2"><li onclick="ans(this,'m5q2','a')">Marketing</li><li onclick="ans(this,'m5q2','b')">Utility</li><li onclick="ans(this,'m5q2','c')">Service (iniciada pelo usuário) ✓</li><li onclick="ans(this,'m5q2','d')">Autenticação</li></ul>
+      <div class="qfb" id="fb-m5q2"></div>
+    </div>
+    <hr class="qdivider">
+    <div class="qwrap">
+      <div class="qq">3. O bot detecta a mensagem: "Vou no Procon amanhã se não resolverem!". A ação correta é:</div>
+      <ul class="qopts" id="q-m5q3"><li onclick="ans(this,'m5q3','a')">Responder automaticamente que o problema será resolvido</li><li onclick="ans(this,'m5q3','b')">Ignorar e continuar o fluxo normal</li><li onclick="ans(this,'m5q3','c')">Escalar imediatamente para atendente humano ✓</li><li onclick="ans(this,'m5q3','d')">Encerrar a conversa</li></ul>
+      <div class="qfb" id="fb-m5q3"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">⭐ Autoavaliação Final — Módulos 1 a 5</div>
+    <div class="se">
+      <div class="se-item"><div class="se-lbl">Capacidade de integrar WhatsApp + n8n + OpenAI de ponta a ponta</div><div class="stars" data-id="m5-1" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+      <div class="se-item"><div class="se-lbl">Confiança para colocar o bot de atendimento em produção</div><div class="stars" data-id="m5-2" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+      <div class="se-item"><div class="se-lbl">Pronto para avançar aos Módulos 6, 7 e 8 (CRM, Agentes, Multiagentes)</div><div class="stars" data-id="m5-3" onclick="star(event)"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div></div>
+    </div>
+  </div>
+  <div class="lnav"><button class="btn btn-ghost" onclick="goTo('m5l4')">← Anterior</button><button class="btn btn-done" onclick="done('m5l5',null)">🏁 Concluir Módulo 5</button></div>
+</div>
+
+<!-- CERTIFICADO -->
+<div id="cert-view">
+  <div class="cert-card">
+    <div class="cert-seal">🏆</div>
+    <div class="cert-badge">IA Aplicada — Automação e Agentes Autônomos</div>
+    <div style="font-size:13px;color:var(--sub);">Certificamos que</div>
+    <div class="cert-name">William Correia</div>
+    <div style="font-size:13px;color:var(--sub);margin-bottom:8px;">concluiu com êxito os módulos</div>
+    <div class="cert-stats">
+      <div class="cert-st"><div class="n" id="cpct">0%</div><div class="l">Concluído</div></div>
+      <div class="cert-st"><div class="n">60h</div><div class="l">Carga Horária</div></div>
+      <div class="cert-st"><div class="n">8</div><div class="l">Módulos</div></div>
+    </div>
+    <hr class="cert-hr">
+    <div style="font-size:11px;color:var(--muted);" id="cert-date"></div>
+    <div style="margin-top:12px;font-size:11px;color:var(--muted);">Certificado completo disponível ao concluir 100% do curso.</div>
+  </div>
+  <button class="btn btn-ghost" style="margin-top:20px;" onclick="showDash()">← Voltar ao Dashboard</button>
+</div>
+
+</main>
+</div><!-- end wrap -->
+<script>
+// ══ CONFIG ══
+const MODS = {
+  1:{lessons:['m1l1','m1l2','m1l3','m1l4'],total:4,color:'var(--blue)'},
+  2:{lessons:['m2l1','m2l2','m2l3','m2l4'],total:4,color:'var(--purple)'},
+  3:{lessons:['m3l1','m3l2','m3l3','m3l4','m3l5'],total:5,color:'var(--orange)'},
+  4:{lessons:['m4l1','m4l2','m4l3','m4l4','m4l5'],total:5,color:'var(--green)'},
+  5:{lessons:['m5l1','m5l2','m5l3','m5l4','m5l5'],total:5,color:'var(--cyan)'}
+};
+const TOTAL = 23;
+const QA = {
+  m1q1:'b',m1q2:'a',m1q3:'c',
+  m2q1:'b',m2q2:'c',m2q3:'d',
+  m3q1:'c',m3q2:'b',m3q3:'c',
+  m4q1:'b',m4q2:'c',m4q3:'b',
+  m5q1:'b',m5q2:'c',m5q3:'c'
+};
+const QE = {
+  m1q1:'IA Discriminativa classifica dados — perfeita para triagem de reclamações por urgência.',
+  m1q2:'Temperatura 0 = determinístico, sempre a resposta mais provável. Essencial para automações.',
+  m1q3:'O n8n é o orquestrador que conecta e coordena todos os sistemas do ecossistema.',
+  m2q1:'GET é o método para buscar/recuperar dados de um recurso existente.',
+  m2q2:'A API retorna o texto em choices[0].message.content — estrutura padrão da API de chat.',
+  m2q3:'401 = Unauthorized. Autenticação inválida ou ausente. Verifique o API Key.',
+  m3q1:'Switch Node cria múltiplos caminhos com base em uma expressão — como switch/case.',
+  m3q2:'$node["Nome"].json.campo acessa outputs de nodes anteriores pelo nome.',
+  m3q3:'Self-hosted = seus dados ficam no seu servidor. Crítico para dados sensíveis de associados.',
+  m4q1:'response_format: json_object garante JSON válido sem texto extra que quebre o fluxo.',
+  m4q2:'Few-shot com exemplos é mais eficaz que descrever o comportamento em palavras.',
+  m4q3:'Function Calling permite que a IA decida quando chamar ferramentas e com quais parâmetros.',
+  m5q1:'A janela de 24h expirou. Fora dela, só templates (HSM) aprovados pela Meta podem iniciar conversa.',
+  m5q2:'Conversas Service iniciadas pelo usuário são gratuitas dentro da janela de 24h.',
+  m5q3:'Menção ao Procon é sinal de escalonamento obrigatório para humano — regra de negócio crítica.'
+};
+
+// ══ STATE ══
+let S = {};
+function load(){
+  try { S = JSON.parse(localStorage.getItem('cia_v3')||'{}'); }
+  catch(e){ S = {}; }
+  if(!S.done) S.done = {};
+  if(!S.cl) S.cl = {};
+  if(!S.stars) S.stars = {};
+  if(!S.cur) S.cur = 'dash';
+  if(!S.activity) S.activity = [];
+  if(!S.streak) S.streak = 0;
+  if(!S.lastDay) S.lastDay = '';
+}
+function save(){ localStorage.setItem('cia_v3', JSON.stringify(S)); }
+
+// ══ STREAK ══
+function updateStreak(){
+  const today = new Date().toLocaleDateString('pt-BR');
+  if(S.lastDay !== today){
+    const yesterday = new Date(Date.now()-86400000).toLocaleDateString('pt-BR');
+    S.streak = (S.lastDay === yesterday) ? (S.streak||0)+1 : 1;
+    S.lastDay = today;
+    save();
+  }
+}
+
+// ══ NAVIGATION ══
+function showAll(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('cert-view').style.display='none';
+}
+function showDash(){
+  showAll('view-dash');
+  document.getElementById('btn-dash').classList.add('active');
+  document.getElementById('btn-cert').classList.remove('active');
+  updateDash();
+  S.cur='dash'; save();
+  document.getElementById('main').scrollTop=0;
+}
+function showCert(){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('cert-view').style.display='flex';
+  document.getElementById('btn-dash').classList.remove('active');
+  document.getElementById('btn-cert').classList.add('active');
+  const pct=calcPct();
+  document.getElementById('cpct').textContent=pct+'%';
+  document.getElementById('cert-date').textContent='Gerado em '+new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+}
+function goTo(id){
+  document.getElementById('cert-view').style.display='none';
+  showAll('view-'+id);
+  document.querySelectorAll('.nitem').forEach(n=>n.classList.remove('active'));
+  const ni=document.getElementById('ni-'+id);
+  if(ni) ni.classList.add('active');
+  document.getElementById('btn-dash').classList.remove('active');
+  S.cur=id; save();
+  document.getElementById('main').scrollTop=0;
+  updateStreak();
+}
+function resumeCourse(){
+  // Find first incomplete lesson
+  for(let m=1;m<=5;m++){
+    for(let l of MODS[m].lessons){
+      if(!S.done[l]){ goTo(l); return; }
+    }
+  }
+  showDash();
+}
+
+// ══ SIDEBAR TOGGLE ══
+function toggleMod(m){
+  const el=document.getElementById('nl'+m);
+  const cur=el.style.maxHeight;
+  el.style.maxHeight=(!cur||cur==='0px') ? el.scrollHeight+'px' : '0px';
+}
+function openMod(m){ 
+  const el=document.getElementById('nl'+m);
+  el.style.maxHeight=el.scrollHeight+'px';
+}
+
+// ══ COMPLETE ══
+function done(id, next){
+  S.done[id]=true;
+  // log activity
+  const labels={
+    m1l1:'Lição: IA Generativa',m1l2:'Lição: LLMs e Modelos',m1l3:'Lição: Ecossistema',m1l4:'Avaliação M1',
+    m2l1:'Lição: O que é API',m2l2:'Lição: REST e JSON',m2l3:'Lição: Postman',m2l4:'Avaliação M2',
+    m3l1:'Lição: Intro n8n',m3l2:'Lição: Nodes e Fluxos',m3l3:'Lição: Primeiro Workflow',m3l4:'Lição: n8n+WA+AI',m3l5:'Avaliação M3',
+    m4l1:'Lição: API OpenAI',m4l2:'Lição: Eng. de Prompt',m4l3:'Lição: Few-shot e CoT',m4l4:'Lição: Function Calling',m4l5:'Avaliação M4',
+    m5l1:'Lição: WA Business API',m5l2:'Lição: Evolution API',m5l3:'Lição: Templates',m5l4:'Lição: Bot Completo',m5l5:'Avaliação M5'
+  };
+  S.activity.unshift({label:labels[id]||id, time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});
+  if(S.activity.length>6) S.activity=S.activity.slice(0,6);
+  save();
+  updateUI();
+  if(next) goTo(next); else showDash();
+}
+
+// ══ CHECKLIST ══
+function chk(el,lid,idx){
+  el.classList.toggle('ck');
+  if(!S.cl[lid]) S.cl[lid]={};
+  S.cl[lid][idx]=el.classList.contains('ck');
+  save();
+}
+function restoreCl(){
+  Object.keys(S.cl).forEach(lid=>{
+    const cl=document.getElementById('cl-'+lid);
+    if(!cl) return;
+    Object.keys(S.cl[lid]).forEach(idx=>{
+      if(S.cl[lid][idx]) cl.querySelectorAll('li')[idx]?.classList.add('ck');
+    });
+  });
+}
+
+// ══ QUIZ ══
+function ans(el,qid,v){
+  const ok=QA[qid];
+  const list=el.parentElement;
+  const fb=document.getElementById('fb-'+qid);
+  list.querySelectorAll('li').forEach(li=>{
+    li.classList.add('qdis');
+    if(li.textContent.includes('✓')) li.classList.add('qok');
+  });
+  if(v===ok){ el.classList.add('qok'); fb.className='qfb show ok'; fb.textContent='✅ Correto! '+QE[qid]; }
+  else { el.classList.add('qerr'); fb.className='qfb show err'; fb.textContent='❌ '+QE[qid]; }
+}
+
+// ══ STARS ══
+function star(e){
+  const c=e.currentTarget; const s=e.target.closest('.star');
+  if(!s) return;
+  const v=parseInt(s.dataset.v);
+  c.querySelectorAll('.star').forEach(st=>st.classList.toggle('on',parseInt(st.dataset.v)<=v));
+  S.stars[c.dataset.id]=v; save();
+}
+function restoreStars(){
+  Object.keys(S.stars).forEach(id=>{
+    const c=document.querySelector('[data-id="'+id+'"]');
+    if(!c) return;
+    c.querySelectorAll('.star').forEach(st=>st.classList.toggle('on',parseInt(st.dataset.v)<=S.stars[id]));
+  });
+}
+
+// ══ CALC ══
+function calcPct(){
+  return Math.round((Object.keys(S.done).length/TOTAL)*100);
+}
+function calcModPct(m){
+  const mod=MODS[m];
+  const d=mod.lessons.filter(l=>S.done[l]).length;
+  return {done:d,total:mod.total,pct:Math.round((d/mod.total)*100)};
+}
+function calcHrs(){
+  return Math.round((Object.keys(S.done).length/TOTAL)*60);
+}
+
+// ══ UPDATE UI ══
+function updateUI(){
+  const pct=calcPct();
+  document.getElementById('hpct').textContent=pct+'%';
+  document.getElementById('hbar').style.width=pct+'%';
+  // nav items
+  const all=[];
+  for(let m=1;m<=5;m++) MODS[m].lessons.forEach(l=>all.push(l));
+  all.forEach(id=>{
+    const chk=document.getElementById('nc-'+id);
+    const ni=document.getElementById('ni-'+id);
+    if(S.done[id]){ if(chk) chk.textContent='✓'; if(ni) ni.classList.add('done'); }
+  });
+  // mod badges
+  for(let m=1;m<=5;m++){
+    const {done,total}=calcModPct(m);
+    const el=document.getElementById('mb'+m);
+    el.textContent=done+'/'+total;
+    if(done===total) el.classList.add('done'); else el.classList.remove('done');
+  }
+}
+
+// ══ DASHBOARD ══
+function updateDash(){
+  const pct=calcPct();
+  const done=Object.keys(S.done).length;
+  document.getElementById('ds-pct').textContent=pct+'%';
+  document.getElementById('ds-lc').textContent=done+' de '+TOTAL+' lições';
+  const mods=Object.values(MODS).filter(m=>m.lessons.every(l=>S.done[l])).length;
+  document.getElementById('ds-mods').textContent=mods;
+  document.getElementById('ds-hrs').textContent=calcHrs()+'h';
+  document.getElementById('ds-streak').textContent=S.streak||0;
+  document.getElementById('ds-last').textContent=S.lastDay?'Último: '+S.lastDay:'Comece hoje!';
+
+  // mod cards
+  for(let m=1;m<=5;m++){
+    const {done,total,pct:mp}=calcModPct(m);
+    document.getElementById('dmf'+m).style.width=mp+'%';
+    document.getElementById('dmp'+m).textContent=mp+'%';
+    const card=document.getElementById('dmc'+m);
+    const status=document.getElementById('dms'+m);
+    card.className='db-mod-card';
+    if(done===total){
+      card.classList.add('done-mod');
+      status.className='db-mod-status concluido';status.textContent='✓ Concluído';
+    } else if(done>0){
+      card.classList.add('active-mod');
+      status.className='db-mod-status em-curso';status.textContent='Em curso';
+    } else {
+      status.className='db-mod-status';status.textContent='—';
+    }
+  }
+
+  // skills
+  const s1=calcModPct(1).pct; const s2=calcModPct(2).pct;
+  const s3=calcModPct(3).pct; const s4=calcModPct(4).pct; const s5=calcModPct(5).pct;
+  ['sk1','sk2','sk3','sk4','sk5'].forEach((id,i)=>{
+    const v=[s1,s2,s3,s4,s5][i];
+    document.getElementById(id).style.width=v+'%';
+    document.getElementById('skp'+(i+1)).textContent=v+'%';
+  });
+
+  // activity
+  const al=document.getElementById('act-list');
+  const colors=['var(--green)','var(--blue)','var(--purple)','var(--orange)','var(--cyan)','var(--yellow)'];
+  if(S.activity.length>0){
+    al.innerHTML=S.activity.map((a,i)=>
+      `<div class="act-item"><span class="act-dot" style="background:${colors[i%colors.length]}"></span><span>${a.label}</span><span class="act-time">${a.time}</span></div>`
+    ).join('');
+  }
+
+  // milestone
+  const mil=document.getElementById('next-milestone');
+  if(pct===0) mil.textContent='Complete o Módulo 1 para desbloquear o mapa da Central Inteligente.';
+  else if(pct<25) mil.textContent='Complete o Módulo 1 para avançar para APIs na Prática.';
+  else if(pct<50) mil.textContent='Você está no Módulo 2-3. Complete para chegar ao n8n prático.';
+  else if(pct<75) mil.textContent='Módulos 1-3 dominados! Agora: Engenharia de Prompt e WhatsApp.';
+  else if(pct<100) mil.textContent='Reta final! Complete os módulos restantes para o certificado.';
+  else mil.textContent='🎉 Curso concluído! Você está pronto para lançar a Central Inteligente.';
+}
+
+// ══ PROMPT BUILDER ══
+function buildPrompt(){
+  const role=document.getElementById('pb-role').value.trim();
+  const task=document.getElementById('pb-task').value.trim();
+  const rules=document.getElementById('pb-rules').value.trim();
+  const fmt=document.getElementById('pb-format').value.trim();
+  let out='';
+  if(role) out+=role+'\n\n';
+  if(task) out+='TAREFA:\n'+task+'\n\n';
+  if(rules) out+='REGRAS:\n'+rules.split('\n').map(r=>r?'- '+r:'').join('\n')+'\n\n';
+  if(fmt) out+='FORMATO DE SAÍDA:\n'+fmt;
+  document.getElementById('pb-out').textContent=out||'Preencha os campos acima.';
+}
+
+// ══ WA SIMULATOR ══
+function waReply(type){
+  const conv=document.getElementById('wa-conv');
+  const desc=document.getElementById('wa-flow-desc');
+  const msgs={
+    associado:{
+      user:'Quero ver meu plano atual',
+      bot:'Encontrei seu cadastro! 🔍\n\nPlano: *Premium*\nVigência: Jan/2024 – Jan/2025\nCoberturas: Roubo, Colisão, Incêndio, Vidros\n\nPrecisa de mais alguma informação?',
+      flow:'<strong>Fluxo ativado:</strong> Consulta de Contrato<br><br>1. Webhook recebe mensagem<br>2. Classifica intenção: "consulta_plano"<br>3. HTTP GET /associados/{telefone}<br>4. OpenAI formata resposta com dados<br>5. Envia via WhatsApp API<br>6. Registra interação no CRM'
+    },
+    sinistro:{
+      user:'Quero acionar um sinistro, bati o carro',
+      bot:'Entendido! Vou iniciar seu acionamento 🚗\n\nPara registrar, preciso de:\n1️⃣ Local do ocorrido\n2️⃣ Data e hora\n3️⃣ Tem boletim de ocorrência?\n\nResponda as 3 perguntas acima.',
+      flow:'<strong>Fluxo ativado:</strong> Acionamento de Sinistro<br><br>1. Classifica intenção: "sinistro"<br>2. OpenAI identifica: "colisão" → Prioridade P2<br>3. Solicita dados complementares<br>4. Após coleta: cria ticket no CRM<br>5. Notifica regulador de colisão via WhatsApp<br>6. Confirma protocolo ao associado'
+    },
+    humano:{
+      user:'Quero falar com uma pessoa',
+      bot:'Claro! 👤 Vou te conectar com um de nossos atendentes.\n\n*Tempo estimado de espera: 3 minutos*\n\nTransferindo o histórico da conversa...',
+      flow:'<strong>Fluxo ativado:</strong> Escalonamento Humano<br><br>1. Detecta intenção: "falar_com_humano"<br>2. Busca atendente disponível no CRM<br>3. Transfere contexto completo da sessão<br>4. Notifica atendente via Slack/WhatsApp<br>5. Confirma tempo de espera ao associado<br>6. Registra motivo do escalonamento'
+    }
+  };
+  const m=msgs[type];
+  conv.innerHTML+=`<div class="wa-msg sent">${m.user}<div class="wa-time">agora</div></div>`;
+  setTimeout(()=>{
+    conv.innerHTML+=`<div class="wa-msg ai">${m.bot}<div class="wa-time">agora</div></div>`;
+    desc.innerHTML=m.flow;
+    conv.scrollTop=conv.scrollHeight;
+  },600);
+}
+
+// ══ SIDEBAR INIT ══
+function initSidebar(){
+  // Open module containing current lesson
+  for(let m=1;m<=5;m++){
+    const has=MODS[m].lessons.some(l=>l===S.cur)||S.cur==='dash';
+    if(MODS[m].lessons.some(l=>l===S.cur)) openMod(m);
+  }
+}
+
+// ══ INIT ══
+load();
+updateStreak();
+restoreCl();
+restoreStars();
+updateUI();
+initSidebar();
+if(S.cur==='dash'||!S.cur) showDash();
+else goTo(S.cur);
+</script>
+</body>
+</html>
