@@ -184,6 +184,28 @@ a{color:var(--route-deep);}
 .badge.yes{background:var(--route-soft); border-color:#BCE6DD; color:var(--route-deep); font-weight:500;}
 .badge.no{background:var(--risk-soft); border-color:#F0C8C3; color:var(--risk-deep); font-weight:500;}
 
+/* ---------- ATA NAVIGATION ---------- */
+.ata-btn{
+  font-family:'IBM Plex Mono', monospace; font-size:13px; font-weight:500;
+  padding:8px 18px; border-radius:8px; cursor:pointer;
+  border:1.5px solid var(--line); background:var(--surface); color:var(--muted);
+  transition:all .15s;
+}
+.ata-btn:hover{border-color:var(--meta); color:var(--meta-deep);}
+.ata-btn.active{background:var(--meta); border-color:var(--meta); color:#fff;}
+
+/* action table rows */
+.act-row td{padding:8px 12px; border-top:0.5px solid var(--line); vertical-align:top; font-size:13px;}
+.act-row:nth-child(even) td{background:var(--paper);}
+.act-pill{font-size:11px; padding:2px 8px; border-radius:12px; white-space:nowrap; display:inline-block;}
+.pill-comercial{background:#FFF3E8; color:#B8430C;}
+.pill-marketing{background:#E3EBFC; color:var(--meta-deep);}
+.pill-financeiro{background:#ECFDF5; color:var(--route-deep);}
+.pill-administrativo{background:#F7ECD6; color:#7A5A1A;}
+.pill-diretoria{background:#F0F0F0; color:#374151;}
+.pill-operacao{background:#FBE3E1; color:var(--risk-deep);}
+.pill-rh{background:#F3E8FF; color:#6B21A8;}
+
 /* ---------- FOOTER ---------- */
 .footnote{
   margin-top:46px; padding-top:18px; border-top:1px dashed var(--line);
@@ -213,7 +235,7 @@ a{color:var(--route-deep);}
         <div class="brand-sub">Painel de indicadores de performance</div>
       </div>
     </div>
-    <div class="period-chip">Cobertura: <b>Jan/2025 – Mai/2026</b> · Indicadores_Atualizados.xls (com Meta)</div>
+    <div class="period-chip">Cobertura: <b>Jan/2025 – Jun/2026</b> · Indicadores_Atualizados.xls + INDICADORES_JUNHO.xls</div>
   </div>
 </div>
 <div class="road"></div>
@@ -230,7 +252,7 @@ a{color:var(--route-deep);}
 
   <!-- ===================== TAB: VISÃO GERAL ===================== -->
   <section class="tabpanel active" id="tab-geral">
-    <h2 class="section-title">Destaques do mês — Maio/2026</h2>
+    <h2 class="section-title">Destaques do mês — Junho/2026</h2>
     <p class="section-sub">Variação calculada contra o mês anterior com dado disponível.</p>
     <div class="hero-grid" id="heroGrid"></div>
 
@@ -238,19 +260,19 @@ a{color:var(--route-deep);}
       <div class="insight-card warn">
         <div class="insight-head"><span class="dot risk"></span>Pontos de atenção</div>
         <ul>
-          <li><b>Qualificação de leads despencou em maio:</b> de 69% para 27% dos leads, junto com queda de 34% no volume total (1.319 → 873). O funil de geração e qualificação merece investigação imediata.</li>
-          <li><b>Cancelamento de placas mais que dobrou desde fevereiro:</b> saiu de 0,96% para a faixa de 1,7–1,9% em março–maio.</li>
-          <li><b>Crescimento de base oscilando perto de zero:</b> 3 dos 5 meses de 2026 tiveram variação negativa, sinal de que novas adesões estão sendo neutralizadas por cancelamentos.</li>
-          <li><b>Indicadores operacionais sem atualização recente:</b> Custo do rastreador (desde Jan/26) e TMI de instalação (desde Nov/25) estão sem novos lançamentos — ver aba Operação.</li>
+          <li><b>Crescimento de base voltou ao negativo:</b> –0,61% em junho, revertendo a recuperação de maio (+0,36%). O cancelamento caiu para 1,35% (o menor nível desde jan/26), mas as novas adesões de 212 ainda não compensam a saída da carteira.</li>
+          <li><b>Taxa de acionamento de assist. 24h ultrapassou a meta:</b> 6,03% contra teto de 6,00% — primeiro mês acima da faixa verde. Custo médio subiu para R$269, próximo ao limite superior de R$294.</li>
+          <li><b>Leads qualificados ainda abaixo do pico:</b> 36% em junho vs 89% em fev/26. Recupera em relação ao mínimo de mai/26 (27%), mas sinaliza que o funil de qualificação ainda não se normalizou.</li>
+          <li><b>Novas adesões internas recuaram:</b> de 110 em mai para 100 em jun (–9,1%), abaixo do teto da faixa verde de 164 — canal interno perdendo tração no trimestre.</li>
         </ul>
       </div>
       <div class="insight-card">
         <div class="insight-head"><span class="dot route"></span>Destaques positivos</div>
         <ul>
-          <li><b>Faturamento recorrente cresce 20% no comparativo anual</b> (Mai/26 vs Mai/25), sustentando a trajetória de receita apesar da leve estabilidade mês a mês.</li>
-          <li><b>Selo RA1000 conquistado e mantido</b> desde fevereiro de 2026 — reputação de atendimento em trajetória sólida.</li>
-          <li><b>Geração de leads pelo marketing acelera continuamente:</b> de 106 para 756 leads/mês entre janeiro e maio (+613%), o melhor indicador de crescimento do período.</li>
-          <li><b>Sinistralidade recuou</b> de 25,7% em abril para 23,7% em maio, aliviando pressão sobre o custo do produto.</li>
+          <li><b>Faturamento recorrente atinge novo recorde:</b> R$1.146.125 em junho, +1,3% vs maio e +20,4% vs junho/25 — melhor mês histórico da série.</li>
+          <li><b>Sinistralidade no menor nível desde o início da série:</b> 21,28% — dentro da faixa verde (≤ 21,41%) pela primeira vez, aliviando o custo do produto.</li>
+          <li><b>Cancelamento de placas caiu 29% em um mês:</b> de 1,91% em mai para 1,35% em jun — melhor resultado de 2026 e alívio direto no crescimento líquido da base.</li>
+          <li><b>Leads via marketing continuam crescendo:</b> 842 em junho (+11,4% vs maio), consolidando trajetória de alta desde janeiro e aproximando-se da meta de 1.000.</li>
         </ul>
       </div>
     </div>
@@ -279,63 +301,220 @@ a{color:var(--route-deep);}
 
   <!-- ===================== TAB: REUNIÃO DE LÍDERES ===================== -->
   <section class="tabpanel" id="tab-reuniao">
-    <h2 class="section-title">Reunião de líderes — 17/06/2026</h2>
-    <p class="section-sub">Registro das decisões e direcionamentos discutidos pela liderança.</p>
+    <h2 class="section-title">Reunião de líderes</h2>
+    <p class="section-sub">Atas registradas — clique na data para abrir o conteúdo completo com planos de ação.</p>
 
-    <div class="metric-card full" style="margin-top:18px;">
-      <div class="metric-name" style="margin-bottom:14px;">Participantes</div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px;">
-        <div>
-          <div class="hero-label">Diretoria</div>
-          <div style="font-size:14px; margin-top:5px;">Gustavo, Rodrigo, William</div>
+    <!-- ATA INDEX -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin:18px 0 8px;">
+      <div onclick="showAta('ata-0708')" style="cursor:pointer; background:var(--surface); border:1.5px solid var(--meta); border-radius:14px; padding:16px 20px; transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(45,108,223,.13)'" onmouseout="this.style.boxShadow=''">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:var(--meta-deep);">08/07/2026</span>
+          <span style="font-size:11px; background:var(--meta); color:#fff; border-radius:20px; padding:2px 9px;">Mais recente</span>
         </div>
-        <div>
-          <div class="hero-label">Comercial</div>
-          <div style="font-size:14px; margin-top:5px;">Mateus</div>
+        <div style="font-size:13px; color:var(--ink-soft); line-height:1.5;">Indicadores comerciais · leads e conversão · processos internos · cultura</div>
+        <div style="font-size:11.5px; color:var(--faint); margin-top:8px;">14 planos de ação registrados</div>
+      </div>
+      <div onclick="showAta('ata-1706')" style="cursor:pointer; background:var(--surface); border:1.5px solid var(--line); border-radius:14px; padding:16px 20px; transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.07)'" onmouseout="this.style.boxShadow=''">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:var(--ink-soft);">17/06/2026</span>
         </div>
-        <div>
-          <div class="hero-label">Administrativo</div>
-          <div style="font-size:14px; margin-top:5px;">Marina</div>
-        </div>
-        <div>
-          <div class="hero-label">Financeiro</div>
-          <div style="font-size:14px; margin-top:5px;">Breno, Jeisi</div>
-        </div>
-        <div>
-          <div class="hero-label">Marketing</div>
-          <div style="font-size:14px; margin-top:5px;">Daniela</div>
-        </div>
+        <div style="font-size:13px; color:var(--ink-soft); line-height:1.5;">Visão 12 meses · canais BEVI/CAMED/HULK · branding · orçamento por setor</div>
+        <div style="font-size:11.5px; color:var(--faint); margin-top:8px;">5 planos de ação registrados</div>
       </div>
     </div>
 
-    <div class="metric-grid" style="margin-top:16px;">
-      <div class="metric-card">
-        <div class="metric-name">Visão de 12 meses</div>
-        <div class="hero-value-row" style="margin-top:8px;">
-          <span class="hero-value">2.000</span><span class="hero-unit">vendas</span>
-        </div>
-        <p style="font-size:13px; color:var(--ink-soft); margin-top:10px; line-height:1.6;">Equivale a uma média de ~167 vendas/mês — abaixo do ritmo de Jan–Mai/26 (~196/mês), o que sugere uma meta deliberadamente conservadora, alinhada ao direcionamento de "focar na visão realista". Importante: isso mede vendas brutas; como o crescimento de base ainda oscila perto de zero (aba Comercial), atingir a meta não garante o mesmo avanço líquido na carteira ativa.</p>
-      </div>
-      <div class="metric-card">
-        <div class="metric-name">Canais comerciais</div>
-        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-          <span class="badge yes" style="min-width:auto;">BEVI</span>
-          <span class="badge" style="min-width:auto;">CAMED</span>
-          <span class="badge" style="min-width:auto;">HULK</span>
-        </div>
-        <p style="font-size:13px; color:var(--ink-soft); margin-top:12px; line-height:1.6;">Foco comercial prioritário na <b>BEVI durante agosto</b>, conforme definido na reunião.</p>
-      </div>
+    <div style="display:flex; gap:10px; margin:18px 0 24px; flex-wrap:wrap;" id="ataDates">
+      <button onclick="showAta('ata-0708')" id="btn-ata-0708" class="ata-btn active">08/07/2026</button>
+      <button onclick="showAta('ata-1706')" id="btn-ata-1706" class="ata-btn">17/06/2026</button>
     </div>
 
-    <div class="metric-card full" style="margin-top:16px;">
-      <div class="metric-name">Marketing — foco em branding</div>
-      <p style="font-size:13px; color:var(--ink-soft); margin-top:10px; line-height:1.6;">Direcionamento de Daniela para os próximos meses: fortalecer a reputação no Reclame Aqui, reformular o site institucional, ampliar a presença no canal Hulk e explorar novas regiões geográficas para expansão da marca.</p>
-    </div>
+    <!-- ATA 08/07/2026 -->
+    <div id="ata-0708">
+      <div class="metric-card full" style="margin-bottom:14px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div class="metric-name">Ata — Reunião de Líderes · 08/07/2026</div>
+            <div class="metric-meta">Pauta: indicadores comerciais, qualidade de dados, canais, processos internos e cultura organizacional</div>
+          </div>
+          <span class="delta flat" style="font-family:'IBM Plex Sans',sans-serif;">📋 Ata gerada por IA a partir de transcrição</span>
+        </div>
+        <div style="margin-top:14px; display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px;">
+          <div><div class="hero-label">Diretoria</div><div style="font-size:14px;margin-top:5px;">Gustavo, Rodrigo, William</div></div>
+          <div><div class="hero-label">Comercial</div><div style="font-size:14px;margin-top:5px;">Mateus, Marcelo</div></div>
+          <div><div class="hero-label">Administrativo</div><div style="font-size:14px;margin-top:5px;">Marina</div></div>
+          <div><div class="hero-label">Financeiro</div><div style="font-size:14px;margin-top:5px;">Breno, Jeisi (Geise)</div></div>
+          <div><div class="hero-label">Marketing</div><div style="font-size:14px;margin-top:5px;">Daniela (Dani)</div></div>
+        </div>
+      </div>
 
-    <div class="metric-card full" style="margin-top:16px; border-color:#BCCBEF;">
-      <div class="metric-name">Sonho do Gustavo — divisão orçamentária por setor</div>
-      <p style="font-size:13px; color:var(--ink-soft); margin-top:10px; line-height:1.6;">Proposta para estruturar o orçamento financeiro por setor e categoria, com apresentação de ROI por investimento e separação clara entre investimento e custo operacional. Iniciativa em fase de planejamento — pode se tornar a próxima camada analítica deste painel, conectando-se diretamente aos indicadores de Faturamento Recorrente e CAC já acompanhados.</p>
-    </div>
+      <div class="metric-grid">
+
+        <div class="metric-card full">
+          <div class="metric-name">📊 Indicadores — Marketing e Leads</div>
+          <p style="font-size:13px;color:var(--ink-soft);margin:10px 0 6px;line-height:1.7;"><b>Contexto:</b> Em junho foram gerados 956 leads totais e 842 via marketing. Desses, 65% foram qualificados e a conversão geral foi de 2,0%. O tráfego pago (Meta Ads) não gerou nenhuma venda no mês. O site foi responsável por 32 vendas — cerca de 50% das vendas do canal digital. Houve divergência de números entre os relatórios do Marcelo, o BI e os dados da Daniela, revelando falta de fonte única de verdade.</p>
+          <p style="font-size:13px;color:var(--ink-soft);margin:6px 0;line-height:1.7;"><b>Definição aprovada de lead qualificado:</b> veículo elegível (ex: Gol sem restrição de modelo), localidade atendida e contato ativo. Lead desqualificado: veículo não autorizado, já associado, localidade fora da cobertura, CPF negado, número incorreto ou sem resposta no primeiro contato.</p>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-name">🔗 Canais e Conversão</div>
+          <ul style="font-size:13px;color:var(--ink-soft);margin:10px 0 0;padding-left:18px;line-height:1.8;">
+            <li>Site: principal canal de conversão (~50% das vendas); Analytics não estava 100% configurado — resolvido pelo Gil</li>
+            <li>Meta Ads (tráfego pago): gerou volume de leads, mas zero vendas em junho; contrato com agência Linker encerra em 22/07</li>
+            <li>WhatsApp: volume maior de leads, porém com maior taxa de desqualificados</li>
+            <li>RA orgânico: ~100 cliques para o botão de site em junho</li>
+            <li>Indicação: canal novo em estruturação — tímido, mas já com primeiros resultados</li>
+          </ul>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-name">💰 Faturamento e Base</div>
+          <ul style="font-size:13px;color:var(--ink-soft);margin:10px 0 0;padding-left:18px;line-height:1.8;">
+            <li>Base praticamente estagnada: jan/26 com 4.969 placas, mai/26 com 4.970 — crescimento líquido nulo</li>
+            <li>Faturamento recorrente crescendo via rateio e reajuste, não por aumento de base</li>
+            <li>Meta acumulada 2026: R$ 6.837k (planejado R$ 6.800k) — dentro do esperado</li>
+            <li>Ponto crítico: novas adesões não superam cancelamentos; para alcançar 5.000 ativos faltam ~60 placas</li>
+            <li>Rateio passou por ajustes e está sendo aplicado corretamente desde abril</li>
+          </ul>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-name">🚗 Motivos de Perda (Comercial)</div>
+          <ul style="font-size:13px;color:var(--ink-soft);margin:10px 0 0;padding-left:18px;line-height:1.8;">
+            <li>Fechou com outra associação: principal motivo (ex: cobertura de terceiros de R$1M que a Mobili não oferece)</li>
+            <li>Preço: desvantagem pontual, tentativas de ajuste em curso</li>
+            <li>Cobertura: ausência de itens como vidros, terceiros amplos</li>
+            <li>Sem retorno do lead: 406 de 610 desqualificados de junho nunca responderam o primeiro contato</li>
+            <li>117 veículos não autorizados (ex: motos em BH) — modelo de risco recusado</li>
+          </ul>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-name">⚙️ Processos Internos — Cadastro e Ativação</div>
+          <p style="font-size:13px;color:var(--ink-soft);margin:10px 0 6px;line-height:1.7;"><b>Problema identificado:</b> A Inara (cadastro) está acumulando funções de back office comercial + conferência + ativação, o que gera erros e atrasos. A documentação deveria chegar completa do consultor; ela só deveria conferir e ativar.</p>
+          <p style="font-size:13px;color:var(--ink-soft);margin:6px 0;line-height:1.7;"><b>Modelo desejado:</b> consultor entrega venda 100% completa → assistente comercial confere pendências → cadastro só ativa. Mateus deve desenhar a jornada e alinhar com William.</p>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-name">🎯 Inadimplência e Cancelamento</div>
+          <ul style="font-size:13px;color:var(--ink-soft);margin:10px 0 0;padding-left:18px;line-height:1.8;">
+            <li>Inadimplência jun/26: 1,31% — melhor resultado desde fev/26 (1,10%)</li>
+            <li>Maior concentração de boletos: dia 20 (~21,5% da massa); dia 5 é crítico quando cai em fim de semana</li>
+            <li>Ação preventiva: cobrar no sábado quando o dia 5 cai em domingo</li>
+            <li>Cancelamento: time atual (Camille, Maia) tem perfil de cobrança, não de retenção — ponto de atenção</li>
+            <li>Retenção: desconto de até 10% disponível + benefícios; taxa de retenção ainda não é monitorada — será acrescentada</li>
+          </ul>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-name">🏆 Reclame Aqui e Marca</div>
+          <ul style="font-size:13px;color:var(--ink-soft);margin:10px 0 0;padding-left:18px;line-height:1.8;">
+            <li>Nota jun/26: 9,40 — dentro da meta (≥ 9,0); meta é 9,5 o ano todo</li>
+            <li>Mobili foi eleita campeã do RA duas vezes — frase usada no perfil gerou debate sobre conformidade com regras da plataforma</li>
+            <li>RA utilizado como argumento comercial comparativo com concorrentes (ex: GV com nota 8,1 vs Mobili 9,4)</li>
+            <li>Texto do "sobre" do Instagram revisado para conformidade; frase "oferecemos proteção veicular" será removida, mantendo só "eleita duas vezes campeã"</li>
+          </ul>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-name">👕 Cultura e Engajamento Interno</div>
+          <ul style="font-size:13px;color:var(--ink-soft);margin:10px 0 0;padding-left:18px;line-height:1.8;">
+            <li>Uniforme: qualidade atual insatisfatória — Gustavo vai cotar Fortinha (BH) como alternativa</li>
+            <li>Proposta de gamificação: colaborador precisa bater meta para ganhar versão premium do uniforme</li>
+            <li>Liderança deve transmitir cultura para o time; posts internos nas redes geram engajamento orgânico com externos</li>
+            <li>Gustavo citou exemplo Disney: atendimento excepcional vem do orgulho de fazer parte, não só do contrato</li>
+            <li>Treinamento comercial: vendedor deve estudar continuamente (regulamentação, produto, argumentação)</li>
+            <li>Pauta de sessões curtas semanais (15 min): Reclame Aqui às terças, Assistência 24h às quartas</li>
+          </ul>
+        </div>
+
+      </div><!-- end metric-grid -->
+
+      <!-- PLANOS DE AÇÃO -->
+      <div class="metric-card full" style="margin-top:16px; border-color:var(--meta-soft);">
+        <div class="metric-name" style="margin-bottom:14px;">✅ Planos de ação — 08/07/2026</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr style="background:var(--ink);color:#fff;">
+                <th style="padding:9px 12px;text-align:left;font-weight:500;border-radius:4px 0 0 0;">#</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:500;">Ação</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:500;">Responsável</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:500;">Prazo</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:500;border-radius:0 4px 0 0;">Área</th>
+              </tr>
+            </thead>
+            <tbody id="acoes-0708"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- end ata-0708 -->
+
+    <!-- ATA 17/06/2026 -->
+    <div id="ata-1706" style="display:none;">
+      <div class="metric-card full" style="margin-bottom:14px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div class="metric-name">Ata — Reunião de Líderes · 17/06/2026</div>
+            <div class="metric-meta">Pauta: visão estratégica 12 meses, canais comerciais, marketing, orçamento por setor e campanha Reclame Aqui</div>
+          </div>
+        </div>
+        <div style="margin-top:14px; display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px;">
+          <div><div class="hero-label">Diretoria</div><div style="font-size:14px;margin-top:5px;">Gustavo, Rodrigo, William</div></div>
+          <div><div class="hero-label">Comercial</div><div style="font-size:14px;margin-top:5px;">Mateus</div></div>
+          <div><div class="hero-label">Administrativo</div><div style="font-size:14px;margin-top:5px;">Marina</div></div>
+          <div><div class="hero-label">Financeiro</div><div style="font-size:14px;margin-top:5px;">Breno, Jeisi</div></div>
+          <div><div class="hero-label">Marketing</div><div style="font-size:14px;margin-top:5px;">Daniela</div></div>
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-name">🎯 Visão de 12 meses</div>
+          <div class="hero-value-row" style="margin-top:8px;"><span class="hero-value">2.000</span><span class="hero-unit">vendas</span></div>
+          <p style="font-size:13px;color:var(--ink-soft);margin-top:10px;line-height:1.6;">Meta conservadora e realista. Equivale a ~167 vendas/mês. Foco no crescimento sustentável com base nos canais existentes antes de escalar.</p>
+        </div>
+        <div class="metric-card">
+          <div class="metric-name">📡 Canais comerciais</div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="badge yes" style="min-width:auto;">BEVI</span>
+            <span class="badge" style="min-width:auto;">CAMED</span>
+            <span class="badge" style="min-width:auto;">HULK</span>
+          </div>
+          <p style="font-size:13px;color:var(--ink-soft);margin-top:12px;line-height:1.6;">Foco prioritário na <b>BEVI em agosto</b>. Canal Hulk previsto como acelerador de crescimento em etapa posterior.</p>
+        </div>
+        <div class="metric-card">
+          <div class="metric-name">📣 Marketing — Branding</div>
+          <ul style="font-size:13px;color:var(--ink-soft);margin:10px 0 0;padding-left:18px;line-height:1.8;">
+            <li>Fortalecer reputação no Reclame Aqui</li>
+            <li>Reformular site institucional</li>
+            <li>Ampliar presença no canal Hulk</li>
+            <li>Explorar novas regiões geográficas</li>
+          </ul>
+        </div>
+        <div class="metric-card">
+          <div class="metric-name">💡 Sonho do Gustavo — Orçamento por setor</div>
+          <p style="font-size:13px;color:var(--ink-soft);margin:10px 0;line-height:1.6;">Estruturar orçamento financeiro por setor e categoria. Apresentar ROI por investimento. Separar investimento de custo operacional. Iniciativa em fase de planejamento.</p>
+        </div>
+      </div>
+
+      <div class="metric-card full" style="margin-top:16px; border-color:var(--meta-soft);">
+        <div class="metric-name" style="margin-bottom:14px;">✅ Planos de ação — 17/06/2026</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr style="background:var(--ink);color:#fff;">
+                <th style="padding:9px 12px;text-align:left;font-weight:500;border-radius:4px 0 0 0;">#</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:500;">Ação</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:500;">Responsável</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:500;">Prazo</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:500;border-radius:0 4px 0 0;">Área</th>
+              </tr>
+            </thead>
+            <tbody id="acoes-1706"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- end ata-1706 -->
   </section>
 
   <div class="footnote">
@@ -347,7 +526,7 @@ a{color:var(--route-deep);}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const DATA = {"Novas Adesões": [{"ano": 2025, "mes": 1, "valor": 170.0, "meta": null}, {"ano": 2025, "mes": 2, "valor": 212.0, "meta": null}, {"ano": 2025, "mes": 3, "valor": 184.0, "meta": null}, {"ano": 2025, "mes": 4, "valor": 235.0, "meta": null}, {"ano": 2025, "mes": 5, "valor": 285.0, "meta": null}, {"ano": 2025, "mes": 6, "valor": 247.0, "meta": null}, {"ano": 2025, "mes": 7, "valor": 219.0, "meta": null}, {"ano": 2025, "mes": 8, "valor": 249.0, "meta": null}, {"ano": 2025, "mes": 9, "valor": 241.0, "meta": null}, {"ano": 2025, "mes": 10, "valor": 261.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 261.0, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 138.0, "meta": 249.0}, {"ano": 2026, "mes": 2, "valor": 188.0, "meta": 255.0}, {"ano": 2026, "mes": 3, "valor": 244.0, "meta": 249.0}, {"ano": 2026, "mes": 4, "valor": 202.0, "meta": 268.0}, {"ano": 2026, "mes": 5, "valor": 208.0, "meta": 316.0}], "Inadimplência Total": [{"ano": 2025, "mes": 1, "valor": 1.4, "meta": null}, {"ano": 2025, "mes": 2, "valor": 1.7, "meta": null}, {"ano": 2025, "mes": 3, "valor": 1.2, "meta": null}, {"ano": 2025, "mes": 4, "valor": 1.5, "meta": null}, {"ano": 2025, "mes": 5, "valor": 1.2, "meta": null}, {"ano": 2025, "mes": 6, "valor": 1.5, "meta": null}, {"ano": 2025, "mes": 7, "valor": 0.8, "meta": null}, {"ano": 2025, "mes": 8, "valor": 1.3, "meta": null}, {"ano": 2025, "mes": 9, "valor": 1.8, "meta": null}, {"ano": 2025, "mes": 10, "valor": 2.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 1.6, "meta": null}, {"ano": 2025, "mes": 12, "valor": 1.5, "meta": null}, {"ano": 2026, "mes": 1, "valor": 1.6, "meta": 1.4}, {"ano": 2026, "mes": 2, "valor": 1.1, "meta": 2.4}, {"ano": 2026, "mes": 3, "valor": 1.59, "meta": 1.97}, {"ano": 2026, "mes": 4, "valor": 1.7, "meta": 1.93}, {"ano": 2026, "mes": 5, "valor": 1.42, "meta": 1.42}], "Custo Unitário Rastreador": [{"ano": 2025, "mes": 1, "valor": 25.34, "meta": 27.0}, {"ano": 2025, "mes": 2, "valor": 24.33, "meta": 27.0}, {"ano": 2025, "mes": 3, "valor": 22.52, "meta": 27.0}, {"ano": 2025, "mes": 4, "valor": 24.71, "meta": 27.0}, {"ano": 2025, "mes": 5, "valor": 24.05, "meta": 27.0}, {"ano": 2025, "mes": 6, "valor": 24.76, "meta": 27.0}, {"ano": 2025, "mes": 7, "valor": 28.5, "meta": 27.0}, {"ano": 2025, "mes": 8, "valor": 31.5, "meta": 27.0}, {"ano": 2025, "mes": 9, "valor": 30.46, "meta": 27.0}, {"ano": 2025, "mes": 10, "valor": 27.3, "meta": 27.0}, {"ano": 2025, "mes": 11, "valor": 32.11, "meta": 27.0}, {"ano": 2025, "mes": 12, "valor": 37.27, "meta": 27.0}, {"ano": 2026, "mes": 1, "valor": 34.0, "meta": 24.0}, {"ano": 2026, "mes": 2, "valor": null, "meta": 24.0}, {"ano": 2026, "mes": 3, "valor": null, "meta": 24.0}, {"ano": 2026, "mes": 4, "valor": null, "meta": 24.0}, {"ano": 2026, "mes": 5, "valor": null, "meta": 24.0}], "Tempo Medio de Instalação - TMI (7 dias)": [{"ano": 2025, "mes": 1, "valor": 54.11, "meta": 80.0}, {"ano": 2025, "mes": 2, "valor": 76.25, "meta": 80.0}, {"ano": 2025, "mes": 3, "valor": 49.18, "meta": 80.0}, {"ano": 2025, "mes": 4, "valor": 59.74, "meta": 80.0}, {"ano": 2025, "mes": 5, "valor": 57.64, "meta": 80.0}, {"ano": 2025, "mes": 6, "valor": 58.65, "meta": 80.0}, {"ano": 2025, "mes": 7, "valor": 58.06, "meta": 80.0}, {"ano": 2025, "mes": 8, "valor": 30.0, "meta": 80.0}, {"ano": 2025, "mes": 9, "valor": 40.0, "meta": 80.0}, {"ano": 2025, "mes": 10, "valor": 41.67, "meta": 80.0}, {"ano": 2025, "mes": 11, "valor": 32.26, "meta": 80.0}, {"ano": 2025, "mes": 12, "valor": null, "meta": 80.0}, {"ano": 2026, "mes": 1, "valor": null, "meta": null}, {"ano": 2026, "mes": 2, "valor": null, "meta": null}, {"ano": 2026, "mes": 3, "valor": null, "meta": null}, {"ano": 2026, "mes": 4, "valor": null, "meta": null}, {"ano": 2026, "mes": 5, "valor": null, "meta": null}], "Reclame Aqui": [{"ano": 2025, "mes": 1, "valor": 9.3, "meta": null}, {"ano": 2025, "mes": 2, "valor": null, "meta": null}, {"ano": 2025, "mes": 3, "valor": null, "meta": null}, {"ano": 2025, "mes": 4, "valor": null, "meta": null}, {"ano": 2025, "mes": 5, "valor": null, "meta": null}, {"ano": 2025, "mes": 6, "valor": null, "meta": null}, {"ano": 2025, "mes": 7, "valor": null, "meta": null}, {"ano": 2025, "mes": 8, "valor": null, "meta": null}, {"ano": 2025, "mes": 9, "valor": null, "meta": null}, {"ano": 2025, "mes": 10, "valor": null, "meta": null}, {"ano": 2025, "mes": 11, "valor": null, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 9.3, "meta": 9.5}, {"ano": 2026, "mes": 2, "valor": 9.4, "meta": 9.5}, {"ano": 2026, "mes": 3, "valor": 9.5, "meta": 9.5}, {"ano": 2026, "mes": 4, "valor": 9.5, "meta": 9.5}, {"ano": 2026, "mes": 5, "valor": 9.4, "meta": 9.5}], "Custo Médio - Assistência 24 hrs": [{"ano": 2025, "mes": 1, "valor": 268.0, "meta": 225.0}, {"ano": 2025, "mes": 2, "valor": 247.0, "meta": 225.0}, {"ano": 2025, "mes": 3, "valor": 253.0, "meta": 225.0}, {"ano": 2025, "mes": 4, "valor": 229.12, "meta": 225.0}, {"ano": 2025, "mes": 5, "valor": 217.0, "meta": 225.0}, {"ano": 2025, "mes": 6, "valor": 222.38, "meta": 225.0}, {"ano": 2025, "mes": 7, "valor": 231.0, "meta": 225.0}, {"ano": 2025, "mes": 8, "valor": 269.0, "meta": 225.0}, {"ano": 2025, "mes": 9, "valor": 262.0, "meta": 225.0}, {"ano": 2025, "mes": 10, "valor": 259.0, "meta": 225.0}, {"ano": 2025, "mes": 11, "valor": 260.0, "meta": 225.0}, {"ano": 2025, "mes": 12, "valor": 258.0, "meta": 225.0}, {"ano": 2026, "mes": 1, "valor": 295.0, "meta": 225.0}, {"ano": 2026, "mes": 2, "valor": 270.0, "meta": 229.0}, {"ano": 2026, "mes": 3, "valor": 276.0, "meta": 235.0}, {"ano": 2026, "mes": 4, "valor": 265.0, "meta": 245.0}, {"ano": 2026, "mes": 5, "valor": 250.76, "meta": 241.0}], "Taxa de Acionamento de Assist. 24 hrs": [{"ano": 2025, "mes": 1, "valor": 6.19, "meta": null}, {"ano": 2025, "mes": 2, "valor": 6.53, "meta": null}, {"ano": 2025, "mes": 3, "valor": 5.37, "meta": null}, {"ano": 2025, "mes": 4, "valor": 6.17, "meta": null}, {"ano": 2025, "mes": 5, "valor": 5.46, "meta": null}, {"ano": 2025, "mes": 6, "valor": 5.65, "meta": null}, {"ano": 2025, "mes": 7, "valor": 4.96, "meta": null}, {"ano": 2025, "mes": 8, "valor": 5.23, "meta": null}, {"ano": 2025, "mes": 9, "valor": 5.63, "meta": null}, {"ano": 2025, "mes": 10, "valor": 2.84, "meta": null}, {"ano": 2025, "mes": 11, "valor": 5.8, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 5.74, "meta": 5.0}, {"ano": 2026, "mes": 2, "valor": 5.19, "meta": 5.0}, {"ano": 2026, "mes": 3, "valor": 5.54, "meta": 5.0}, {"ano": 2026, "mes": 4, "valor": 5.35, "meta": 5.0}, {"ano": 2026, "mes": 5, "valor": 5.45, "meta": 5.0}], "Inadimplência UDM": [{"ano": 2025, "mes": 1, "valor": 3.77, "meta": 2.5}, {"ano": 2025, "mes": 2, "valor": 5.44, "meta": 2.5}, {"ano": 2025, "mes": 3, "valor": 3.87, "meta": 2.5}, {"ano": 2025, "mes": 4, "valor": 5.27, "meta": 2.5}, {"ano": 2025, "mes": 5, "valor": 3.56, "meta": 2.5}, {"ano": 2025, "mes": 6, "valor": 4.37, "meta": 2.5}, {"ano": 2025, "mes": 7, "valor": 3.46, "meta": 2.5}, {"ano": 2025, "mes": 8, "valor": 4.17, "meta": 2.5}, {"ano": 2025, "mes": 9, "valor": 4.99, "meta": 2.5}, {"ano": 2025, "mes": 10, "valor": 4.0, "meta": 2.5}, {"ano": 2025, "mes": 11, "valor": 5.6, "meta": 2.5}, {"ano": 2025, "mes": 12, "valor": 3.31, "meta": 2.5}, {"ano": 2026, "mes": 1, "valor": 3.87, "meta": 4.41}, {"ano": 2026, "mes": 2, "valor": 4.44, "meta": 5.96}, {"ano": 2026, "mes": 3, "valor": 3.79, "meta": 4.33}, {"ano": 2026, "mes": 4, "valor": 3.8, "meta": 5.0}, {"ano": 2026, "mes": 5, "valor": 4.08, "meta": 3.62}], "Cancelamento de placas.": [{"ano": 2025, "mes": 1, "valor": 2.35, "meta": 3.62}, {"ano": 2025, "mes": 2, "valor": 2.0, "meta": 1.8}, {"ano": 2025, "mes": 3, "valor": 1.74, "meta": 1.8}, {"ano": 2025, "mes": 4, "valor": 1.9, "meta": 1.8}, {"ano": 2025, "mes": 5, "valor": 1.5, "meta": 1.8}, {"ano": 2025, "mes": 6, "valor": 1.76, "meta": 1.8}, {"ano": 2025, "mes": 7, "valor": 2.0, "meta": 1.8}, {"ano": 2025, "mes": 8, "valor": 1.4, "meta": 1.8}, {"ano": 2025, "mes": 9, "valor": 1.7, "meta": 1.8}, {"ano": 2025, "mes": 10, "valor": 1.3, "meta": 1.7}, {"ano": 2025, "mes": 11, "valor": 1.2, "meta": 1.8}, {"ano": 2025, "mes": 12, "valor": 1.17, "meta": 1.8}, {"ano": 2026, "mes": 1, "valor": 0.88, "meta": 1.8}, {"ano": 2026, "mes": 2, "valor": 0.96, "meta": 1.94}, {"ano": 2026, "mes": 3, "valor": 1.9, "meta": 1.38}, {"ano": 2026, "mes": 4, "valor": 1.73, "meta": 1.62}, {"ano": 2026, "mes": 5, "valor": 1.91, "meta": 1.41}], "Faturamento Recorrente": [{"ano": 2025, "mes": 1, "valor": 953024.0, "meta": null}, {"ano": 2025, "mes": 2, "valor": 927481.0, "meta": null}, {"ano": 2025, "mes": 3, "valor": 941946.0, "meta": null}, {"ano": 2025, "mes": 4, "valor": 928803.0, "meta": null}, {"ano": 2025, "mes": 5, "valor": 941549.0, "meta": null}, {"ano": 2025, "mes": 6, "valor": 969341.0, "meta": null}, {"ano": 2025, "mes": 7, "valor": 970773.0, "meta": null}, {"ano": 2025, "mes": 8, "valor": 986646.0, "meta": null}, {"ano": 2025, "mes": 9, "valor": 1001883.0, "meta": null}, {"ano": 2025, "mes": 10, "valor": 1031300.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 980430.0, "meta": null}, {"ano": 2025, "mes": 12, "valor": 1040022.0, "meta": null}, {"ano": 2026, "mes": 1, "valor": 1118773.0, "meta": 1130189.0}, {"ano": 2026, "mes": 2, "valor": 1107551.0, "meta": 1133642.0}, {"ano": 2026, "mes": 3, "valor": 1201705.0, "meta": 1131537.0}, {"ano": 2026, "mes": 4, "valor": 1132484.0, "meta": 1131476.0}, {"ano": 2026, "mes": 5, "valor": 1131231.0, "meta": 1134112.0}], "Crescimento de Base": [{"ano": 2026, "mes": 1, "valor": -2.36, "meta": 1.09}, {"ano": 2026, "mes": 2, "valor": -0.8, "meta": 0.71}, {"ano": 2026, "mes": 3, "valor": 1.01, "meta": 0.89}, {"ano": 2026, "mes": 4, "valor": -0.54, "meta": 0.99}, {"ano": 2026, "mes": 5, "valor": 0.36, "meta": 2.29}], "RA 1000": [{"ano": 2026, "mes": 1, "valor": 0.0, "meta": 1.0}, {"ano": 2026, "mes": 2, "valor": 1.0, "meta": 1.0}, {"ano": 2026, "mes": 3, "valor": 1.0, "meta": 1.0}, {"ano": 2026, "mes": 4, "valor": 1.0, "meta": 1.0}, {"ano": 2026, "mes": 5, "valor": 1.0, "meta": 1.0}], "Churn - Taxa de Perda Efetiva": [{"ano": 2026, "mes": 1, "valor": 3.74, "meta": 3.99}, {"ano": 2026, "mes": 2, "valor": 3.9, "meta": 2.43}, {"ano": 2026, "mes": 3, "valor": 3.85, "meta": 3.6}, {"ano": 2026, "mes": 4, "valor": 3.09, "meta": 4.67}, {"ano": 2026, "mes": 5, "valor": 3.53, "meta": 3.31}], "Volume de Lead Gerados pelo Marketing": [{"ano": 2026, "mes": 1, "valor": 106.0, "meta": null}, {"ano": 2026, "mes": 2, "valor": 433.0, "meta": null}, {"ano": 2026, "mes": 3, "valor": 466.0, "meta": null}, {"ano": 2026, "mes": 4, "valor": 628.0, "meta": null}, {"ano": 2026, "mes": 5, "valor": 756.0, "meta": null}], "Novas Adesões - Internas": [{"ano": 2025, "mes": 1, "valor": 45.0, "meta": null}, {"ano": 2025, "mes": 2, "valor": 44.0, "meta": null}, {"ano": 2025, "mes": 3, "valor": 49.0, "meta": null}, {"ano": 2025, "mes": 4, "valor": 69.0, "meta": null}, {"ano": 2025, "mes": 5, "valor": 128.0, "meta": null}, {"ano": 2025, "mes": 6, "valor": 106.0, "meta": null}, {"ano": 2025, "mes": 7, "valor": 85.0, "meta": null}, {"ano": 2025, "mes": 8, "valor": 104.0, "meta": null}, {"ano": 2025, "mes": 9, "valor": 103.0, "meta": null}, {"ano": 2025, "mes": 10, "valor": 102.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 140.0, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 41.0, "meta": 111.0}, {"ano": 2026, "mes": 2, "valor": 81.0, "meta": 114.0}, {"ano": 2026, "mes": 3, "valor": 132.0, "meta": 111.0}, {"ano": 2026, "mes": 4, "valor": 90.0, "meta": 119.0}, {"ano": 2026, "mes": 5, "valor": 110.0, "meta": 141.0}], "Sinistralidade": [{"ano": 2026, "mes": 1, "valor": 22.2, "meta": 19.43}, {"ano": 2026, "mes": 2, "valor": 21.7, "meta": 17.92}, {"ano": 2026, "mes": 3, "valor": 21.6, "meta": 22.47}, {"ano": 2026, "mes": 4, "valor": 25.7, "meta": 22.58}, {"ano": 2026, "mes": 5, "valor": 23.7, "meta": 23.12}], "% Leads Qualificados": [{"ano": 2026, "mes": 1, "valor": 86.0, "meta": null}, {"ano": 2026, "mes": 2, "valor": 89.0, "meta": null}, {"ano": 2026, "mes": 3, "valor": 76.0, "meta": null}, {"ano": 2026, "mes": 4, "valor": 69.0, "meta": null}, {"ano": 2026, "mes": 5, "valor": 27.0, "meta": null}], "Total de Leads": [{"ano": 2026, "mes": 1, "valor": 236.0, "meta": null}, {"ano": 2026, "mes": 2, "valor": 756.0, "meta": null}, {"ano": 2026, "mes": 3, "valor": 1222.0, "meta": null}, {"ano": 2026, "mes": 4, "valor": 1319.0, "meta": null}, {"ano": 2026, "mes": 5, "valor": 873.0, "meta": null}]};
+const DATA = {"Novas Adesões": [{"ano": 2025, "mes": 1, "valor": 170.0, "meta": null}, {"ano": 2025, "mes": 2, "valor": 212.0, "meta": null}, {"ano": 2025, "mes": 3, "valor": 184.0, "meta": null}, {"ano": 2025, "mes": 4, "valor": 235.0, "meta": null}, {"ano": 2025, "mes": 5, "valor": 285.0, "meta": null}, {"ano": 2025, "mes": 6, "valor": 247.0, "meta": null}, {"ano": 2025, "mes": 7, "valor": 219.0, "meta": null}, {"ano": 2025, "mes": 8, "valor": 249.0, "meta": null}, {"ano": 2025, "mes": 9, "valor": 241.0, "meta": null}, {"ano": 2025, "mes": 10, "valor": 261.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 261.0, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 138.0, "meta": 249.0}, {"ano": 2026, "mes": 2, "valor": 188.0, "meta": 255.0}, {"ano": 2026, "mes": 3, "valor": 244.0, "meta": 249.0}, {"ano": 2026, "mes": 4, "valor": 202.0, "meta": 268.0}, {"ano": 2026, "mes": 5, "valor": 208.0, "meta": 316.0}, {"ano": 2026, "mes": 6, "valor": 212.0, "meta": 367.0}], "Inadimplência Total": [{"ano": 2025, "mes": 1, "valor": 1.4, "meta": null}, {"ano": 2025, "mes": 2, "valor": 1.7, "meta": null}, {"ano": 2025, "mes": 3, "valor": 1.2, "meta": null}, {"ano": 2025, "mes": 4, "valor": 1.5, "meta": null}, {"ano": 2025, "mes": 5, "valor": 1.2, "meta": null}, {"ano": 2025, "mes": 6, "valor": 1.5, "meta": null}, {"ano": 2025, "mes": 7, "valor": 0.8, "meta": null}, {"ano": 2025, "mes": 8, "valor": 1.3, "meta": null}, {"ano": 2025, "mes": 9, "valor": 1.8, "meta": null}, {"ano": 2025, "mes": 10, "valor": 2.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 1.6, "meta": null}, {"ano": 2025, "mes": 12, "valor": 1.5, "meta": null}, {"ano": 2026, "mes": 1, "valor": 1.6, "meta": 1.4}, {"ano": 2026, "mes": 2, "valor": 1.1, "meta": 2.4}, {"ano": 2026, "mes": 3, "valor": 1.59, "meta": 1.97}, {"ano": 2026, "mes": 4, "valor": 1.7, "meta": 1.93}, {"ano": 2026, "mes": 5, "valor": 1.42, "meta": 1.42}, {"ano": 2026, "mes": 6, "valor": 1.31, "meta": 1.61}], "Custo Unitário Rastreador": [{"ano": 2025, "mes": 1, "valor": 25.34, "meta": 27.0}, {"ano": 2025, "mes": 2, "valor": 24.33, "meta": 27.0}, {"ano": 2025, "mes": 3, "valor": 22.52, "meta": 27.0}, {"ano": 2025, "mes": 4, "valor": 24.71, "meta": 27.0}, {"ano": 2025, "mes": 5, "valor": 24.05, "meta": 27.0}, {"ano": 2025, "mes": 6, "valor": 24.76, "meta": 27.0}, {"ano": 2025, "mes": 7, "valor": 28.5, "meta": 27.0}, {"ano": 2025, "mes": 8, "valor": 31.5, "meta": 27.0}, {"ano": 2025, "mes": 9, "valor": 30.46, "meta": 27.0}, {"ano": 2025, "mes": 10, "valor": 27.3, "meta": 27.0}, {"ano": 2025, "mes": 11, "valor": 32.11, "meta": 27.0}, {"ano": 2025, "mes": 12, "valor": 37.27, "meta": 27.0}, {"ano": 2026, "mes": 1, "valor": 34.0, "meta": 24.0}, {"ano": 2026, "mes": 2, "valor": null, "meta": 24.0}, {"ano": 2026, "mes": 3, "valor": null, "meta": 24.0}, {"ano": 2026, "mes": 4, "valor": null, "meta": 24.0}, {"ano": 2026, "mes": 5, "valor": null, "meta": 24.0}], "Tempo Medio de Instalação - TMI (7 dias)": [{"ano": 2025, "mes": 1, "valor": 54.11, "meta": 80.0}, {"ano": 2025, "mes": 2, "valor": 76.25, "meta": 80.0}, {"ano": 2025, "mes": 3, "valor": 49.18, "meta": 80.0}, {"ano": 2025, "mes": 4, "valor": 59.74, "meta": 80.0}, {"ano": 2025, "mes": 5, "valor": 57.64, "meta": 80.0}, {"ano": 2025, "mes": 6, "valor": 58.65, "meta": 80.0}, {"ano": 2025, "mes": 7, "valor": 58.06, "meta": 80.0}, {"ano": 2025, "mes": 8, "valor": 30.0, "meta": 80.0}, {"ano": 2025, "mes": 9, "valor": 40.0, "meta": 80.0}, {"ano": 2025, "mes": 10, "valor": 41.67, "meta": 80.0}, {"ano": 2025, "mes": 11, "valor": 32.26, "meta": 80.0}, {"ano": 2025, "mes": 12, "valor": null, "meta": 80.0}, {"ano": 2026, "mes": 1, "valor": null, "meta": null}, {"ano": 2026, "mes": 2, "valor": null, "meta": null}, {"ano": 2026, "mes": 3, "valor": null, "meta": null}, {"ano": 2026, "mes": 4, "valor": null, "meta": null}, {"ano": 2026, "mes": 5, "valor": null, "meta": null}], "Reclame Aqui": [{"ano": 2025, "mes": 1, "valor": 9.3, "meta": null}, {"ano": 2025, "mes": 2, "valor": null, "meta": null}, {"ano": 2025, "mes": 3, "valor": null, "meta": null}, {"ano": 2025, "mes": 4, "valor": null, "meta": null}, {"ano": 2025, "mes": 5, "valor": null, "meta": null}, {"ano": 2025, "mes": 6, "valor": null, "meta": null}, {"ano": 2025, "mes": 7, "valor": null, "meta": null}, {"ano": 2025, "mes": 8, "valor": null, "meta": null}, {"ano": 2025, "mes": 9, "valor": null, "meta": null}, {"ano": 2025, "mes": 10, "valor": null, "meta": null}, {"ano": 2025, "mes": 11, "valor": null, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 9.3, "meta": 9.5}, {"ano": 2026, "mes": 2, "valor": 9.4, "meta": 9.5}, {"ano": 2026, "mes": 3, "valor": 9.5, "meta": 9.5}, {"ano": 2026, "mes": 4, "valor": 9.5, "meta": 9.5}, {"ano": 2026, "mes": 5, "valor": 9.4, "meta": 9.5}, {"ano": 2026, "mes": 6, "valor": 9.4, "meta": 9.6}], "Custo Médio - Assistência 24 hrs": [{"ano": 2025, "mes": 1, "valor": 268.0, "meta": 225.0}, {"ano": 2025, "mes": 2, "valor": 247.0, "meta": 225.0}, {"ano": 2025, "mes": 3, "valor": 253.0, "meta": 225.0}, {"ano": 2025, "mes": 4, "valor": 229.12, "meta": 225.0}, {"ano": 2025, "mes": 5, "valor": 217.0, "meta": 225.0}, {"ano": 2025, "mes": 6, "valor": 222.38, "meta": 225.0}, {"ano": 2025, "mes": 7, "valor": 231.0, "meta": 225.0}, {"ano": 2025, "mes": 8, "valor": 269.0, "meta": 225.0}, {"ano": 2025, "mes": 9, "valor": 262.0, "meta": 225.0}, {"ano": 2025, "mes": 10, "valor": 259.0, "meta": 225.0}, {"ano": 2025, "mes": 11, "valor": 260.0, "meta": 225.0}, {"ano": 2025, "mes": 12, "valor": 258.0, "meta": 225.0}, {"ano": 2026, "mes": 1, "valor": 295.0, "meta": 225.0}, {"ano": 2026, "mes": 2, "valor": 270.0, "meta": 229.0}, {"ano": 2026, "mes": 3, "valor": 276.0, "meta": 235.0}, {"ano": 2026, "mes": 4, "valor": 265.0, "meta": 245.0}, {"ano": 2026, "mes": 5, "valor": 250.76, "meta": 241.0}, {"ano": 2026, "mes": 6, "valor": 269.0, "meta": 294.0}], "Taxa de Acionamento de Assist. 24 hrs": [{"ano": 2025, "mes": 1, "valor": 6.19, "meta": null}, {"ano": 2025, "mes": 2, "valor": 6.53, "meta": null}, {"ano": 2025, "mes": 3, "valor": 5.37, "meta": null}, {"ano": 2025, "mes": 4, "valor": 6.17, "meta": null}, {"ano": 2025, "mes": 5, "valor": 5.46, "meta": null}, {"ano": 2025, "mes": 6, "valor": 5.65, "meta": null}, {"ano": 2025, "mes": 7, "valor": 4.96, "meta": null}, {"ano": 2025, "mes": 8, "valor": 5.23, "meta": null}, {"ano": 2025, "mes": 9, "valor": 5.63, "meta": null}, {"ano": 2025, "mes": 10, "valor": 2.84, "meta": null}, {"ano": 2025, "mes": 11, "valor": 5.8, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 5.74, "meta": 5.0}, {"ano": 2026, "mes": 2, "valor": 5.19, "meta": 5.0}, {"ano": 2026, "mes": 3, "valor": 5.54, "meta": 5.0}, {"ano": 2026, "mes": 4, "valor": 5.35, "meta": 5.0}, {"ano": 2026, "mes": 5, "valor": 5.45, "meta": 5.0}, {"ano": 2026, "mes": 6, "valor": 6.03, "meta": 6.0}], "Inadimplência UDM": [{"ano": 2025, "mes": 1, "valor": 3.77, "meta": 2.5}, {"ano": 2025, "mes": 2, "valor": 5.44, "meta": 2.5}, {"ano": 2025, "mes": 3, "valor": 3.87, "meta": 2.5}, {"ano": 2025, "mes": 4, "valor": 5.27, "meta": 2.5}, {"ano": 2025, "mes": 5, "valor": 3.56, "meta": 2.5}, {"ano": 2025, "mes": 6, "valor": 4.37, "meta": 2.5}, {"ano": 2025, "mes": 7, "valor": 3.46, "meta": 2.5}, {"ano": 2025, "mes": 8, "valor": 4.17, "meta": 2.5}, {"ano": 2025, "mes": 9, "valor": 4.99, "meta": 2.5}, {"ano": 2025, "mes": 10, "valor": 4.0, "meta": 2.5}, {"ano": 2025, "mes": 11, "valor": 5.6, "meta": 2.5}, {"ano": 2025, "mes": 12, "valor": 3.31, "meta": 2.5}, {"ano": 2026, "mes": 1, "valor": 3.87, "meta": 4.41}, {"ano": 2026, "mes": 2, "valor": 4.44, "meta": 5.96}, {"ano": 2026, "mes": 3, "valor": 3.79, "meta": 4.33}, {"ano": 2026, "mes": 4, "valor": 3.8, "meta": 5.0}, {"ano": 2026, "mes": 5, "valor": 4.08, "meta": 3.62}, {"ano": 2026, "mes": 6, "valor": 3.63, "meta": 4.19}], "Cancelamento de placas.": [{"ano": 2025, "mes": 1, "valor": 2.35, "meta": 3.62}, {"ano": 2025, "mes": 2, "valor": 2.0, "meta": 1.8}, {"ano": 2025, "mes": 3, "valor": 1.74, "meta": 1.8}, {"ano": 2025, "mes": 4, "valor": 1.9, "meta": 1.8}, {"ano": 2025, "mes": 5, "valor": 1.5, "meta": 1.8}, {"ano": 2025, "mes": 6, "valor": 1.76, "meta": 1.8}, {"ano": 2025, "mes": 7, "valor": 2.0, "meta": 1.8}, {"ano": 2025, "mes": 8, "valor": 1.4, "meta": 1.8}, {"ano": 2025, "mes": 9, "valor": 1.7, "meta": 1.8}, {"ano": 2025, "mes": 10, "valor": 1.3, "meta": 1.7}, {"ano": 2025, "mes": 11, "valor": 1.2, "meta": 1.8}, {"ano": 2025, "mes": 12, "valor": 1.17, "meta": 1.8}, {"ano": 2026, "mes": 1, "valor": 0.88, "meta": 1.8}, {"ano": 2026, "mes": 2, "valor": 0.96, "meta": 1.94}, {"ano": 2026, "mes": 3, "valor": 1.9, "meta": 1.38}, {"ano": 2026, "mes": 4, "valor": 1.73, "meta": 1.62}, {"ano": 2026, "mes": 5, "valor": 1.91, "meta": 1.41}, {"ano": 2026, "mes": 6, "valor": 1.35, "meta": 1.64}], "Faturamento Recorrente": [{"ano": 2025, "mes": 1, "valor": 953024.0, "meta": null}, {"ano": 2025, "mes": 2, "valor": 927481.0, "meta": null}, {"ano": 2025, "mes": 3, "valor": 941946.0, "meta": null}, {"ano": 2025, "mes": 4, "valor": 928803.0, "meta": null}, {"ano": 2025, "mes": 5, "valor": 941549.0, "meta": null}, {"ano": 2025, "mes": 6, "valor": 969341.0, "meta": null}, {"ano": 2025, "mes": 7, "valor": 970773.0, "meta": null}, {"ano": 2025, "mes": 8, "valor": 986646.0, "meta": null}, {"ano": 2025, "mes": 9, "valor": 1001883.0, "meta": null}, {"ano": 2025, "mes": 10, "valor": 1031300.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 980430.0, "meta": null}, {"ano": 2025, "mes": 12, "valor": 1040022.0, "meta": null}, {"ano": 2026, "mes": 1, "valor": 1118773.0, "meta": 1130189.0}, {"ano": 2026, "mes": 2, "valor": 1107551.0, "meta": 1133642.0}, {"ano": 2026, "mes": 3, "valor": 1201705.0, "meta": 1131537.0}, {"ano": 2026, "mes": 4, "valor": 1132484.0, "meta": 1131476.0}, {"ano": 2026, "mes": 5, "valor": 1131231.0, "meta": 1134112.0}, {"ano": 2026, "mes": 6, "valor": 1146125.22, "meta": 1204793.0}], "Crescimento de Base": [{"ano": 2026, "mes": 1, "valor": -2.36, "meta": 1.09}, {"ano": 2026, "mes": 2, "valor": -0.8, "meta": 0.71}, {"ano": 2026, "mes": 3, "valor": 1.01, "meta": 0.89}, {"ano": 2026, "mes": 4, "valor": -0.54, "meta": 0.99}, {"ano": 2026, "mes": 5, "valor": 0.36, "meta": 2.29}, {"ano": 2026, "mes": 6, "valor": -0.61, "meta": 2.39}], "RA 1000": [{"ano": 2026, "mes": 1, "valor": 0.0, "meta": 1.0}, {"ano": 2026, "mes": 2, "valor": 1.0, "meta": 1.0}, {"ano": 2026, "mes": 3, "valor": 1.0, "meta": 1.0}, {"ano": 2026, "mes": 4, "valor": 1.0, "meta": 1.0}, {"ano": 2026, "mes": 5, "valor": 1.0, "meta": 1.0}, {"ano": 2026, "mes": 6, "valor": 1.0, "meta": 1.5}], "Churn - Taxa de Perda Efetiva": [{"ano": 2026, "mes": 1, "valor": 3.74, "meta": 3.99}, {"ano": 2026, "mes": 2, "valor": 3.9, "meta": 2.43}, {"ano": 2026, "mes": 3, "valor": 3.85, "meta": 3.6}, {"ano": 2026, "mes": 4, "valor": 3.09, "meta": 4.67}, {"ano": 2026, "mes": 5, "valor": 3.53, "meta": 3.31}, {"ano": 2026, "mes": 6, "valor": 3.34, "meta": 4.55}], "Volume de Lead Gerados pelo Marketing": [{"ano": 2026, "mes": 1, "valor": 106.0, "meta": null}, {"ano": 2026, "mes": 2, "valor": 433.0, "meta": null}, {"ano": 2026, "mes": 3, "valor": 466.0, "meta": null}, {"ano": 2026, "mes": 4, "valor": 628.0, "meta": null}, {"ano": 2026, "mes": 5, "valor": 756.0, "meta": null}, {"ano": 2026, "mes": 6, "valor": 842.0, "meta": 1000.0}], "Novas Adesões - Internas": [{"ano": 2025, "mes": 1, "valor": 45.0, "meta": null}, {"ano": 2025, "mes": 2, "valor": 44.0, "meta": null}, {"ano": 2025, "mes": 3, "valor": 49.0, "meta": null}, {"ano": 2025, "mes": 4, "valor": 69.0, "meta": null}, {"ano": 2025, "mes": 5, "valor": 128.0, "meta": null}, {"ano": 2025, "mes": 6, "valor": 106.0, "meta": null}, {"ano": 2025, "mes": 7, "valor": 85.0, "meta": null}, {"ano": 2025, "mes": 8, "valor": 104.0, "meta": null}, {"ano": 2025, "mes": 9, "valor": 103.0, "meta": null}, {"ano": 2025, "mes": 10, "valor": 102.0, "meta": null}, {"ano": 2025, "mes": 11, "valor": 140.0, "meta": null}, {"ano": 2025, "mes": 12, "valor": null, "meta": null}, {"ano": 2026, "mes": 1, "valor": 41.0, "meta": 111.0}, {"ano": 2026, "mes": 2, "valor": 81.0, "meta": 114.0}, {"ano": 2026, "mes": 3, "valor": 132.0, "meta": 111.0}, {"ano": 2026, "mes": 4, "valor": 90.0, "meta": 119.0}, {"ano": 2026, "mes": 5, "valor": 110.0, "meta": 141.0}, {"ano": 2026, "mes": 6, "valor": 100.0, "meta": 164.0}], "Sinistralidade": [{"ano": 2026, "mes": 1, "valor": 22.2, "meta": 19.43}, {"ano": 2026, "mes": 2, "valor": 21.7, "meta": 17.92}, {"ano": 2026, "mes": 3, "valor": 21.6, "meta": 22.47}, {"ano": 2026, "mes": 4, "valor": 25.7, "meta": 22.58}, {"ano": 2026, "mes": 5, "valor": 23.7, "meta": 23.12}, {"ano": 2026, "mes": 6, "valor": 21.28, "meta": 21.41}], "% Leads Qualificados": [{"ano": 2026, "mes": 1, "valor": 86.0, "meta": null}, {"ano": 2026, "mes": 2, "valor": 89.0, "meta": null}, {"ano": 2026, "mes": 3, "valor": 76.0, "meta": null}, {"ano": 2026, "mes": 4, "valor": 69.0, "meta": null}, {"ano": 2026, "mes": 5, "valor": 27.0, "meta": null}, {"ano": 2026, "mes": 6, "valor": 36.0, "meta": null}], "Total de Leads": [{"ano": 2026, "mes": 1, "valor": 236.0, "meta": null}, {"ano": 2026, "mes": 2, "valor": 756.0, "meta": null}, {"ano": 2026, "mes": 3, "valor": 1222.0, "meta": null}, {"ano": 2026, "mes": 4, "valor": 1319.0, "meta": null}, {"ano": 2026, "mes": 5, "valor": 873.0, "meta": null}, {"ano": 2026, "mes": 6, "valor": 956.0, "meta": null}]};
 const GS_TARGETS = {"% Análise no Prazo - GS": 85.0, "% Indeferimento - GS": 25.0, "% Regulagem no Prazo - GS": 85.0, "% De Ajustes - GS": 10.0, "TME (tempo médio de espera) - GS": 5.0, "CSAT - GS": 3.0, "NPS - GS": 70.0};
 
 const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -644,10 +823,8 @@ buildGrid('gridFinanceiro', [
 
 // OPERAÇÃO
 const opCards = [
-  metricCardYoY('Custo Unitário Rastreador','Custo unitário do rastreador','R$',2,'#C7CCD4', SIGNAL, {good:'down', metaNote:'sem novos lançamentos após Jan/2026'}),
   metricCardYoY('Custo Médio - Assistência 24 hrs','Custo médio — assistência 24h','R$',2,'#C7CCD4', RISK, {good:'down'}),
   metricCardYoY('Taxa de Acionamento de Assist. 24 hrs','Taxa de acionamento — assist. 24h','%',2,'#C7CCD4', SIGNAL, {good:'down', ppDelta:true}),
-  metricCardYoY('Tempo Medio de Instalação - TMI (7 dias)','TMI — instalações no prazo de 7 dias','%',1,'#C7CCD4', ROUTE, {good:'up', metaNote:'sem lançamentos desde Nov/2025'}),
   metricCardYoY('Reclame Aqui','Nota Reclame Aqui','pts',2,'#C7CCD4', ROUTE, {good:'up', metaNote:'nota de 0 a 10 · cobertura parcial em 2025'}),
 ];
 document.getElementById('gridOperacao').innerHTML = opCards.map(c=>c.html).join('') + `
@@ -719,6 +896,65 @@ document.getElementById('tabnav').addEventListener('click', (e)=>{
     requestAnimationFrame(()=> tabRenders[key].forEach(fn=>fn()) );
   }
 });
+
+/* ---------- ATA NAVIGATION ---------- */
+function showAta(id){
+  ['ata-0708','ata-1706'].forEach(a=>{
+    document.getElementById(a).style.display = a===id ? '' : 'none';
+  });
+  document.querySelectorAll('.ata-btn').forEach(b=>{
+    b.classList.toggle('active', b.id === 'btn-'+id);
+  });
+  // scroll to ata content
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ---------- ACTION TABLES ---------- */
+function pill(area){
+  const map = {
+    'Comercial':'pill-comercial','Marketing':'pill-marketing','Financeiro':'pill-financeiro',
+    'Administrativo':'pill-administrativo','Diretoria':'pill-diretoria',
+    'Operação':'pill-operacao','RH':'pill-rh'
+  };
+  return `<span class="act-pill ${map[area]||'pill-diretoria'}">${area}</span>`;
+}
+function renderAcoes(tbodyId, rows){
+  const tbody = document.getElementById(tbodyId);
+  if(!tbody) return;
+  tbody.innerHTML = rows.map((r,i)=>`<tr class="act-row">
+    <td style="color:var(--faint);font-family:'IBM Plex Mono',monospace;">${String(i+1).padStart(2,'0')}</td>
+    <td style="font-weight:500;color:var(--ink);">${r[0]}</td>
+    <td>${r[1]}</td>
+    <td style="font-family:'IBM Plex Mono',monospace;white-space:nowrap;">${r[2]}</td>
+    <td>${pill(r[3])}</td>
+  </tr>`).join('');
+}
+
+renderAcoes('acoes-0708', [
+  ['Implementar fonte única de dados: alinhar BI, Marcelo e relatórios da Dani para bater o número antes da reunião mensal. Números devem ser enviados um dia antes da reunião.','William / Marcelo / Breno','Próxima reunião','Diretoria'],
+  ['Criar relatório de conversão por canal (site, Meta, WhatsApp, indicação) para apresentar mensalmente.','Mateus / Marcelo','Próxima reunião','Comercial'],
+  ['Mapear motivos de perda por concorrente: saber para quem se perde (GV, Amor, Seguradora) e por qual motivo (cobertura, preço). Apresentar Pareto das perdas.','Mateus','Próxima reunião','Comercial'],
+  ['Desenhar jornada de cadastro e ativação: separar responsabilidades de consultor, assistente comercial e cadastro. Apresentar para William e ajustar processo.','Mateus','Jul/2026','Comercial'],
+  ['Contratar ou designar perfil de retenção (CS) para atender cancelamentos — separado do time de cobrança. Avançar no processo de CS já iniciado.','William / Marina','Ago/2026','RH'],
+  ['Adicionar indicador de retenção de cancelamentos ao painel (solicitações vs efetivados vs retidos).','William','Próxima reunião','Diretoria'],
+  ['Lançar campanha de indicação estruturada com benefícios (milhas, brindes Hulk) — reunião com time em 14/07.','Mateus / Daniela','14/Jul/2026','Comercial'],
+  ['Ação preventiva de inadimplência: cobrar no sábado quando vencimento dia 5 cai no domingo.','Breno / Geise','Imediato','Financeiro'],
+  ['Implementar arquivo de retorno automático de cobrança bancária (parametrização interna).','Breno','Jul/2026','Financeiro'],
+  ['Atualizar texto do "sobre" do Instagram: remover frase "oferecemos proteção veicular", manter "eleita duas vezes campeã".','Daniela','Imediato','Marketing'],
+  ['Cotar uniformes com a Fortinha (BH) e propor gamificação: meta para ganhar versão premium.','Gustavo','Jul/2026','Diretoria'],
+  ['Estruturar sessões semanais de 15 min por tema: Reclame Aqui (terça) e Assistência 24h (quarta).','Mateus / Daniela','Imediato','Comercial'],
+  ['BI de marketing (conversão do site) deve ser aberto e consultado diariamente pela Daniela e Elisa.','Daniela','Imediato','Marketing'],
+  ['Encerrar contrato com agência Linker em 22/07; iniciar diagnóstico com GT antes de retomar Meta Ads.','Daniela','22/Jul/2026','Marketing'],
+]);
+
+renderAcoes('acoes-1706', [
+  ['Definir e comunicar plano de expansão 12 meses (meta 2.000 vendas) para todos os times — formato de comunicado, não de alinhamento.','Gustavo','Jul/2026','Diretoria'],
+  ['Estruturar foco comercial na BEVI para agosto — plano tático com Mateus.','Mateus','Jul/2026','Comercial'],
+  ['Marketing: reformular site, fortalecer Reclame Aqui, ampliar presença no Hulk e mapear novas regiões.','Daniela','Ago/2026','Marketing'],
+  ['Iniciar estrutura de orçamento por setor e categoria, com separação entre investimento e custo operacional e ROI por investimento.','Breno / Gustavo','Set/2026','Financeiro'],
+  ['Montar plano de campanha RA (Prêmio Reclame Aqui 2026) com rastreamento por UTM; votação abre 02/09.','Daniela / William','Ago/2026','Marketing'],
+]);
 </script>
 
 
